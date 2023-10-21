@@ -1,0 +1,12 @@
+{
+  "extends": "@finsweet/tsconfig",
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": "./",
+    "paths": {
+      "$utils/*": ["src/utils/*"],
+      "$motion/*": ["src/motion/*"],
+      "$pages/*": ["src/pages"]
+    }
+  }
+}
