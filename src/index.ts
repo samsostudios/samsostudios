@@ -1,4 +1,7 @@
+import { formattedTime } from '$utils/fomattedTime';
+
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  console.log('/// mainJS ///');
+  const time = formattedTime();
+  console.log('// 🌎 -- ' + time + ' //');
 });
