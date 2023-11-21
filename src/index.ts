@@ -6,6 +6,7 @@ window.Webflow ||= [];
 window.Webflow.push(() => {
   const time = formattedTime();
   console.log('// 🌎 -- ' + time + ' //');
+  console.log('test');
 
   // Global Modules
   siteFrame();
