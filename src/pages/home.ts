@@ -5,6 +5,6 @@ export const home = () => {
   // console.log('home');
 
   // Page Modules
-  homeScroll();
+  // homeScroll();
   timeModule();
 };

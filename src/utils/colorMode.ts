@@ -4,21 +4,25 @@ export const colorMode = () => {
 
   const style = getComputedStyle(document.body);
 
-  console.log('yo', style, style.getPropertyValue('--xmode-l--priamry'));
+  console.log('yo', style.getPropertyValue('--xmode-l--priamry'));
+  console.log(`--xmode-${curMode}`);
 
-  colorSetup['primary'] = 'hello';
+  for (const item in colorSetup) {
+    console.log(item);
+  }
 
-  console.log('here', colorSetup);
+  // colorSetup['primary'] = 'hello';
 
   function getCurrentColorMode() {
     let defaultMode = 'l';
     const modeHistory = localStorage.getItem('cmode');
 
     if (modeHistory === null) {
+      console.log('setting default mode');
       localStorage.setItem('cmode', defaultMode);
-    } else {
+    } else if (modeHistory !== defaultMode) {
       console.log('switch initial mode');
-      defaultMode = 'd';
+      defaultMode = modeHistory;
     }
 
     return defaultMode;

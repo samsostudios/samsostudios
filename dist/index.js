@@ -6430,92 +6430,6 @@
 
   // src/modules/homeScroll.ts
   gsapWithCSS.registerPlugin(ScrollTrigger2);
-  var homeScroll = () => {
-    const viewSwitch = document.querySelector(".info-module_component");
-    init4();
-    handleSwitch();
-    function init4() {
-      const viewTypes = ["slide", "grid"];
-      const defaultView = viewTypes[1];
-      if (defaultView === "slide") {
-        slideScroll();
-      } else {
-        gridScroll();
-      }
-    }
-    function handleSwitch() {
-      let viewToggled = false;
-      viewSwitch.addEventListener("click", () => {
-        viewToggled = !viewToggled;
-        if (viewToggled) {
-          console.log("show grid");
-        } else {
-          console.log("show slide");
-        }
-      });
-    }
-  };
-  var slideScroll = () => {
-    init4();
-    slideScroller();
-    window.addEventListener("resize", () => {
-      init4();
-    });
-    function init4() {
-      const nav = document.querySelector(".nav_component");
-      const slideHeader = document.querySelector(".home-header_component");
-      const slideWrapper = document.querySelector(".home-slide_component");
-      const slideList = document.querySelector(".home-slide_list");
-      const slideItems = [...document.querySelectorAll(".home-slide_item")];
-      const slideGap = 16;
-      const slideActiveRatio = 0.7;
-      const slideHeight = nav.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom - slideGap * 2;
-      const slideActiveWidth = slideList.clientWidth * slideActiveRatio - slideGap / 2;
-      const slideNextWidth = slideList.clientWidth * (1 - slideActiveRatio) - slideGap / 2;
-      gsapWithCSS.set(slideWrapper, { height: slideHeight });
-      slideItems.forEach((e, i) => {
-        const isFirst = i === 0;
-        gsapWithCSS.set(e, { position: "absolute" });
-        if (isFirst) {
-          gsapWithCSS.set(e, { width: slideActiveWidth });
-        }
-        if (!isFirst) {
-          gsapWithCSS.set(e, { width: slideNextWidth, right: 0 });
-        }
-      });
-    }
-    function slideScroller() {
-    }
-  };
-  var gridScroll = () => {
-    console.log("gridScroll");
-  };
-
-  // src/pages/home.ts
-  var home = () => {
-    homeScroll();
-  };
-
-  // src/utils/colorMode.ts
-  var colorMode = () => {
-    const curMode = getCurrentColorMode();
-    const colorSetup = { primary: "", secondary: "", accent: "" };
-    const style = getComputedStyle(document.body);
-    console.log("yo", style, style.getPropertyValue("--xmode-l--primary"));
-    colorSetup["primary"] = "hello";
-    console.log("here", colorSetup);
-    function getCurrentColorMode() {
-      let defaultMode = "l";
-      const modeHistory = localStorage.getItem("cmode");
-      if (modeHistory === null) {
-        localStorage.setItem("cmode", defaultMode);
-      } else {
-        console.log("switch initial mode");
-        defaultMode = "d";
-      }
-      return defaultMode;
-    }
-  };
 
   // src/utils/fomattedTime.ts
   var getTime = () => {
@@ -6544,8 +6458,31 @@
 
   // src/pages/home.ts
   var home = () => {
-    homeScroll();
     timeModule();
+  };
+
+  // src/utils/colorMode.ts
+  var colorMode = () => {
+    const curMode = getCurrentColorMode();
+    const colorSetup = { primary: "", secondary: "", accent: "" };
+    const style = getComputedStyle(document.body);
+    console.log("yo", style.getPropertyValue("--xmode-l--priamry"));
+    console.log(`--xmode-${curMode}`);
+    for (const item in colorSetup) {
+      console.log(item);
+    }
+    function getCurrentColorMode() {
+      let defaultMode = "l";
+      const modeHistory = localStorage.getItem("cmode");
+      if (modeHistory === null) {
+        console.log("setting default mode");
+        localStorage.setItem("cmode", defaultMode);
+      } else if (modeHistory !== defaultMode) {
+        console.log("switch initial mode");
+        defaultMode = modeHistory;
+      }
+      return defaultMode;
+    }
   };
 
   // src/index.ts

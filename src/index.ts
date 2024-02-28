@@ -1,11 +1,11 @@
 import { siteFrame } from '$components/siteFrame';
 import { home } from '$pages/home';
 import { colorMode } from '$utils/colorMode';
-import { formattedTime } from '$utils/fomattedTime';
+import { getTime } from '$utils/fomattedTime';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  const time = formattedTime();
+  const time = getTime();
   console.log('// 🌎 -- ' + time + ' //');
   console.log('test');
 
