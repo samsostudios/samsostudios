@@ -6496,6 +6496,27 @@
     homeScroll();
   };
 
+  // src/utils/colorMode.ts
+  var colorMode = () => {
+    const curMode = getCurrentColorMode();
+    const colorSetup = { primary: "", secondary: "", accent: "" };
+    const style = getComputedStyle(document.body);
+    console.log("yo", style, style.getPropertyValue("--xmode-l--primary"));
+    colorSetup["primary"] = "hello";
+    console.log("here", colorSetup);
+    function getCurrentColorMode() {
+      let defaultMode = "l";
+      const modeHistory = localStorage.getItem("cmode");
+      if (modeHistory === null) {
+        localStorage.setItem("cmode", defaultMode);
+      } else {
+        console.log("switch initial mode");
+        defaultMode = "d";
+      }
+      return defaultMode;
+    }
+  };
+
   // src/utils/fomattedTime.ts
   var formattedTime = () => {
     const now = /* @__PURE__ */ new Date();
@@ -6529,7 +6550,9 @@
   window.Webflow.push(() => {
     const time = formattedTime();
     console.log("// \u{1F30E} -- " + time + " //");
+    console.log("test");
     siteFrame();
+    colorMode();
     const windowLocation = window.location.pathname;
     if (windowLocation === "/") {
       home();
