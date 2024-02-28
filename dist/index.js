@@ -6428,7 +6428,7 @@
   };
   _getGSAP3() && gsap3.registerPlugin(ScrollTrigger2);
 
-  // src/components/homeScroll.ts
+  // src/modules/homeScroll.ts
   gsapWithCSS.registerPlugin(ScrollTrigger2);
   var homeScroll = () => {
     const viewSwitch = document.querySelector(".info-module_component");
@@ -6436,7 +6436,7 @@
     handleSwitch();
     function init4() {
       const viewTypes = ["slide", "grid"];
-      const defaultView = viewTypes[0];
+      const defaultView = viewTypes[1];
       if (defaultView === "slide") {
         slideScroll();
       } else {
@@ -6518,37 +6518,40 @@
   };
 
   // src/utils/fomattedTime.ts
-  var formattedTime = () => {
+  var getTime = () => {
     const now = /* @__PURE__ */ new Date();
-    function isDST(date) {
-      const year = date.getUTCFullYear();
-      const secondSundayOfMarch = new Date(Date.UTC(year, 2, 8));
-      while (secondSundayOfMarch.getUTCDay() !== 0) {
-        secondSundayOfMarch.setUTCDate(secondSundayOfMarch.getUTCDate() + 1);
-      }
-      const firstSundayOfNovember = new Date(Date.UTC(year, 10, 1));
-      while (firstSundayOfNovember.getUTCDay() !== 0) {
-        firstSundayOfNovember.setUTCDate(firstSundayOfNovember.getUTCDate() + 1);
-      }
-      return date >= secondSundayOfMarch && date < firstSundayOfNovember;
-    }
-    const offset = isDST(now) ? 6 * 60 * 60 * 1e3 : 7 * 60 * 60 * 1e3;
-    const nowInMT = new Date(now.valueOf() - offset);
-    let hours = nowInMT.getUTCHours();
-    const minutes = String(nowInMT.getUTCMinutes()).padStart(2, "0");
-    const seconds = String(nowInMT.getUTCSeconds()).padStart(2, "0");
+    const hours = now.getHours() % 12 || 12;
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
     const period = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    const formattedHours = String(hours).padStart(2, "0");
-    const formattedTime2 = `${formattedHours}:${minutes}:${seconds} ${period}`;
-    return formattedTime2;
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${period}`;
+    return formattedTime;
+  };
+  var timeModule = () => {
+    const timeModule2 = document.querySelector(".info-module_component.is-time");
+    function updateModule() {
+      const now = /* @__PURE__ */ new Date();
+      const hours = now.getHours() % 12 || 12;
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+      const period = hours >= 12 ? "PM" : "AM";
+      const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${period}`;
+      timeModule2.children[0].innerHTML = formattedTime;
+      setTimeout(updateModule, 1e3);
+    }
+    updateModule();
+  };
+
+  // src/pages/home.ts
+  var home = () => {
+    homeScroll();
+    timeModule();
   };
 
   // src/index.ts
   window.Webflow ||= [];
   window.Webflow.push(() => {
-    const time = formattedTime();
+    const time = getTime();
     console.log("// \u{1F30E} -- " + time + " //");
     console.log("test");
     siteFrame();
