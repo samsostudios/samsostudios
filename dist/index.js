@@ -6464,15 +6464,19 @@
   // src/utils/colorMode.ts
   var colorMode = () => {
     const curMode = getCurrentColorMode();
-    const colorSetup = { primary: "", secondary: "", accent: "" };
-    const style = getComputedStyle(document.body);
-    console.log("yo", style.getPropertyValue("--xmode-l--priamry"));
-    console.log(`--xmode-${curMode}`);
-    for (const item in colorSetup) {
-      console.log(item);
+    const colorSetup = { primary: "" };
+    const modeToggles = [...document.querySelectorAll(".mode-toggle_indicator")];
+    updateColorSetup(curMode);
+    for (let i = 0; i < modeToggles.length - 1; i++) {
+      const temp = modeToggles[i];
+      temp.addEventListener("click", (e) => {
+        const target = e.target;
+        const targetMode = target.dataset.xmode;
+        console.log(targetMode);
+      });
     }
     function getCurrentColorMode() {
-      let defaultMode = "l";
+      let defaultMode = "d";
       const modeHistory = localStorage.getItem("cmode");
       if (modeHistory === null) {
         console.log("setting default mode");
@@ -6482,6 +6486,19 @@
         defaultMode = modeHistory;
       }
       return defaultMode;
+    }
+    function updateColorSetup(mode) {
+      const style = getComputedStyle(document.body);
+      for (const item in colorSetup) {
+        const getVar = style.getPropertyValue(`--xmode-${mode}--${item}`);
+        colorSetup.primary = getVar;
+        setColor();
+      }
+    }
+    function setColor() {
+      const body = document.querySelector("body");
+      gsapWithCSS.to(body, { duration: 0.5, backgroundColor: colorSetup.primary, ease: "power4.out" });
+      console.log("SET", colorSetup);
     }
   };
 
