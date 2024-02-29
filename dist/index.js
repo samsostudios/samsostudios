@@ -6473,6 +6473,7 @@
         const target = e.target;
         const targetMode = target.dataset.xmode;
         console.log(targetMode);
+        updateColorSetup(targetMode);
       });
     }
     function getCurrentColorMode() {
@@ -6492,6 +6493,7 @@
       for (const item in colorSetup) {
         const getVar = style.getPropertyValue(`--xmode-${mode}--${item}`);
         colorSetup.primary = getVar;
+        console.log("set mode", getVar);
         setColor();
       }
     }

@@ -12,9 +12,10 @@ export const colorMode = () => {
     const temp = modeToggles[i] as HTMLElement;
     temp.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
-      const targetMode = target.dataset.xmode;
+      const targetMode = target.dataset.xmode as string;
 
       console.log(targetMode);
+      updateColorSetup(targetMode);
     });
   }
   // colorSetup['primary'] = 'hello';
@@ -41,6 +42,8 @@ export const colorMode = () => {
       const getVar = style.getPropertyValue(`--xmode-${mode}--${item}`);
 
       colorSetup.primary = getVar;
+
+      console.log('set mode', getVar);
 
       setColor();
     }
