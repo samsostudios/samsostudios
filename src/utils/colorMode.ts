@@ -1,8 +1,17 @@
 import { gsap } from 'gsap';
 
 export const colorMode = () => {
+  type Mode = {
+    [index: string]: string;
+  };
+  const colorSetup: Mode = {
+    primary: '',
+    secondary: '',
+    'invert-p': '',
+    'invert-s': '',
+    glass: '',
+  };
   const curMode = getCurrentColorMode();
-  const colorSetup = { primary: '' };
   const modeToggles = [...document.querySelectorAll('.mode-toggle_indicator')];
 
   updateColorSetup(curMode);
@@ -14,11 +23,10 @@ export const colorMode = () => {
       const target = e.target as HTMLElement;
       const targetMode = target.dataset.xmode as string;
 
-      console.log(targetMode);
       updateColorSetup(targetMode);
+      localStorage.setItem('cmode', targetMode);
     });
   }
-  // colorSetup['primary'] = 'hello';
 
   function getCurrentColorMode() {
     let defaultMode = 'd';
@@ -36,23 +44,31 @@ export const colorMode = () => {
   }
 
   function updateColorSetup(mode: string) {
-    // setup colors
     const style = getComputedStyle(document.body);
     for (const item in colorSetup) {
       const getVar = style.getPropertyValue(`--xmode-${mode}--${item}`);
-
-      colorSetup.primary = getVar;
-
-      console.log('set mode', getVar);
-
-      setColor();
+      colorSetup[item] = getVar;
     }
+
+    setColor();
   }
 
   function setColor() {
-    const body = document.querySelector('body');
-
-    gsap.to(body, { duration: 0.5, backgroundColor: colorSetup.primary, ease: 'power4.out' });
     console.log('SET', colorSetup);
+    const body = document.querySelector('[data-cmode-main]');
+    const glassElements = [...document.querySelectorAll('.mode_glass-effect')];
+
+    gsap.to(body, {
+      duration: 0.5,
+      backgroundColor: colorSetup['primary'],
+      color: colorSetup['invert-p'],
+      ease: 'power4.out',
+    });
+    gsap.to(glassElements, {
+      duration: 0.5,
+      backgroundColor: colorSetup['glass'],
+      borderColor: colorSetup['invert-p'],
+      ease: 'power4.out',
+    });
   }
 };

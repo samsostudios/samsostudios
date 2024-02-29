@@ -4217,7 +4217,9 @@
 
   // src/components/siteFrame.ts
   var siteFrame = () => {
-    const siteFrame2 = document.querySelector(".site_frame");
+    const siteFrame2 = document.querySelector(".frame_fill");
+    const temp = `polygon(0vw 0vh, 0vw 100vh, 1vw 100vh, 1vh 1vh, 99vh 1vh, 99vw 99vh, 1vw 99vh, 1vw 100vh, 100vw 100vh, 100vw 0vh)`;
+    gsapWithCSS.to(siteFrame2, { clipPath: temp });
   };
 
   // node_modules/gsap/Observer.js
@@ -6463,8 +6465,14 @@
 
   // src/utils/colorMode.ts
   var colorMode = () => {
+    const colorSetup = {
+      primary: "",
+      secondary: "",
+      "invert-p": "",
+      "invert-s": "",
+      glass: ""
+    };
     const curMode = getCurrentColorMode();
-    const colorSetup = { primary: "" };
     const modeToggles = [...document.querySelectorAll(".mode-toggle_indicator")];
     updateColorSetup(curMode);
     for (let i = 0; i < modeToggles.length - 1; i++) {
@@ -6472,8 +6480,8 @@
       temp.addEventListener("click", (e) => {
         const target = e.target;
         const targetMode = target.dataset.xmode;
-        console.log(targetMode);
         updateColorSetup(targetMode);
+        localStorage.setItem("cmode", targetMode);
       });
     }
     function getCurrentColorMode() {
@@ -6492,15 +6500,26 @@
       const style = getComputedStyle(document.body);
       for (const item in colorSetup) {
         const getVar = style.getPropertyValue(`--xmode-${mode}--${item}`);
-        colorSetup.primary = getVar;
-        console.log("set mode", getVar);
-        setColor();
+        colorSetup[item] = getVar;
       }
+      setColor();
     }
     function setColor() {
-      const body = document.querySelector("body");
-      gsapWithCSS.to(body, { duration: 0.5, backgroundColor: colorSetup.primary, ease: "power4.out" });
       console.log("SET", colorSetup);
+      const body = document.querySelector("[data-cmode-main]");
+      const glassElements = [...document.querySelectorAll(".mode_glass-effect")];
+      gsapWithCSS.to(body, {
+        duration: 0.5,
+        backgroundColor: colorSetup["primary"],
+        color: colorSetup["invert-p"],
+        ease: "power4.out"
+      });
+      gsapWithCSS.to(glassElements, {
+        duration: 0.5,
+        backgroundColor: colorSetup["glass"],
+        borderColor: colorSetup["invert-p"],
+        ease: "power4.out"
+      });
     }
   };
 
