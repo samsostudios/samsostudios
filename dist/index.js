@@ -4218,8 +4218,24 @@
   // src/components/siteFrame.ts
   var siteFrame = () => {
     const siteFrame2 = document.querySelector(".frame_fill");
-    const temp = `polygon(0vw 0vh, 0vw 100vh, 1vw 100vh, 1vh 1vh, 99vh 1vh, 99vw 99vh, 1vw 99vh, 1vw 100vh, 100vw 100vh, 100vw 0vh)`;
+    const frameTarget = window.innerWidth * 0.01;
+    const frameWidth = window.innerWidth - frameTarget;
+    const frameHeight = window.innerHeight - frameTarget;
+    console.log(window.innerWidth, frameWidth, frameHeight);
+    const temp = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameWidth}px ${frameTarget}px, 75% 75%, 33% 75%, 33% 100%, 100% 100%, 100% 0%)`;
     gsapWithCSS.to(siteFrame2, { clipPath: temp });
+    guides(frameTarget);
+    function guides(calc) {
+      const frameGuides = [...document.querySelectorAll(".frame_guide")];
+      for (const i in frameGuides) {
+        if (frameGuides[i].classList.contains("horizontal")) {
+          gsapWithCSS.to(frameGuides[i], { width: calc });
+        } else if (frameGuides[i].classList.contains("vertical")) {
+          frameGuides[i].classList.contains("right") ? gsapWithCSS.to(frameGuides[i], { right: calc }) : gsapWithCSS.to(frameGuides[i], { left: calc });
+          gsapWithCSS.to(frameGuides[i], { height: calc });
+        }
+      }
+    }
   };
 
   // node_modules/gsap/Observer.js
