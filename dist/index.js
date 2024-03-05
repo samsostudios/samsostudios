@@ -4218,21 +4218,36 @@
   // src/components/siteFrame.ts
   var siteFrame = () => {
     const siteFrame2 = document.querySelector(".frame_fill");
-    const frameTarget = window.innerWidth * 0.01;
-    const frameWidth = window.innerWidth - frameTarget;
-    const frameHeight = window.innerHeight - frameTarget;
-    console.log(window.innerWidth, frameWidth, frameHeight);
-    const temp = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameWidth}px ${frameTarget}px, 75% 75%, 33% 75%, 33% 100%, 100% 100%, 100% 0%)`;
-    gsapWithCSS.to(siteFrame2, { clipPath: temp });
-    guides(frameTarget);
+    const frameBorder = document.querySelector(".frame_stroke");
+    setup();
+    window.addEventListener("resize", () => {
+      setup();
+    });
+    function setup() {
+      const scaleData = siteFrame2.dataset.frameScale;
+      const frameScale = parseFloat(scaleData);
+      const frameTarget = window.innerWidth * frameScale;
+      const frameMaxWidth = window.innerWidth - frameTarget;
+      const frameMaxHeight = window.innerHeight - frameTarget;
+      const ogFrame = `polygon(0% 0%, 0% 100%, 1% 100%, 1% 1%, 99% 1%, 99% 99%, 1% 99%, 0% 100%, 100% 100%, 100% 0%)`;
+      const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${frameMaxHeight}px, ${frameTarget}px ${frameMaxHeight}px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
+      gsapWithCSS.to(siteFrame2, { duration: 0, clipPath: frameClip });
+      gsapWithCSS.to(frameBorder, {
+        duration: 0,
+        width: `${frameMaxWidth - frameTarget}px`,
+        height: `${frameMaxHeight - frameTarget}px`
+      });
+      guides(frameTarget);
+    }
     function guides(calc) {
       const frameGuides = [...document.querySelectorAll(".frame_guide")];
       for (const i in frameGuides) {
         if (frameGuides[i].classList.contains("horizontal")) {
-          gsapWithCSS.to(frameGuides[i], { width: calc });
+          frameGuides[i].classList.contains("top") ? gsapWithCSS.set(frameGuides[i], { top: calc }) : gsapWithCSS.set(frameGuides[i], { bottom: calc });
+          gsapWithCSS.set(frameGuides[i], { width: calc });
         } else if (frameGuides[i].classList.contains("vertical")) {
-          frameGuides[i].classList.contains("right") ? gsapWithCSS.to(frameGuides[i], { right: calc }) : gsapWithCSS.to(frameGuides[i], { left: calc });
-          gsapWithCSS.to(frameGuides[i], { height: calc });
+          frameGuides[i].classList.contains("right") ? gsapWithCSS.set(frameGuides[i], { right: calc }) : gsapWithCSS.set(frameGuides[i], { left: calc });
+          gsapWithCSS.set(frameGuides[i], { height: calc });
         }
       }
     }
@@ -6497,7 +6512,6 @@
         const target = e.target;
         const targetMode = target.dataset.xmode;
         updateColorSetup(targetMode);
-        localStorage.setItem("cmode", targetMode);
       });
     }
     function getCurrentColorMode() {
@@ -6518,24 +6532,58 @@
         const getVar = style.getPropertyValue(`--xmode-${mode}--${item}`);
         colorSetup[item] = getVar;
       }
+      localStorage.setItem("cmode", mode);
       setColor();
     }
     function setColor() {
-      console.log("SET", colorSetup);
-      const body = document.querySelector("[data-cmode-main]");
+      console.log("SET", colorSetup, localStorage.getItem("cmode"));
+      const body = document.querySelector("body");
+      const secondaryElements = [...document.querySelectorAll(".mode_secondary")];
       const glassElements = [...document.querySelectorAll(".mode_glass-effect")];
+      const borderElements = [...document.querySelectorAll(".mode_border")];
+      const buttonElements = [...document.querySelectorAll("a")];
+      const glyphElements = [...document.querySelectorAll(".ss-glyph_path")];
+      console.log(buttonElements);
       gsapWithCSS.to(body, {
-        duration: 0.5,
         backgroundColor: colorSetup["primary"],
         color: colorSetup["invert-p"],
         ease: "power4.out"
       });
-      gsapWithCSS.to(glassElements, {
-        duration: 0.5,
-        backgroundColor: colorSetup["glass"],
-        borderColor: colorSetup["invert-p"],
-        ease: "power4.out"
-      });
+      if (secondaryElements.length > 0) {
+        gsapWithCSS.to(secondaryElements, { backgroundColor: colorSetup["secondary"], ease: "power4.out" });
+      }
+      if (glassElements.length > 0) {
+        gsapWithCSS.to(glassElements, {
+          backgroundColor: colorSetup["glass"],
+          ease: "power4.out"
+        });
+      }
+      if (borderElements.length > 0) {
+        gsapWithCSS.to(borderElements, {
+          borderColor: colorSetup["invert-p"],
+          ease: "power4.out"
+        });
+      }
+      if (buttonElements.length > 0) {
+        console.log(buttonElements);
+        gsapWithCSS.to(buttonElements, {
+          color: colorSetup["invert-p"],
+          ease: "power4.out"
+        });
+        for (const i in buttonElements) {
+          if (buttonElements[i].classList.contains("nav_link")) {
+            if (buttonElements[i].classList.contains("w--current")) {
+              gsapWithCSS.to(buttonElements[i], { borderColor: colorSetup["invert-p"], ease: "power4.out" });
+            } else {
+              const createHover = ``;
+              buttonElements[i].classList.add("mode_dark");
+            }
+          }
+        }
+      }
+      if (glyphElements.length > 0) {
+        gsapWithCSS.to(glyphElements, { fill: colorSetup["invert-p"], ease: "power4.out" });
+      }
     }
   };
 

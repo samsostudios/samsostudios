@@ -13,7 +13,6 @@ export const colorMode = () => {
   };
   const curMode = getCurrentColorMode();
   const modeToggles = [...document.querySelectorAll('.mode-toggle_indicator')];
-
   updateColorSetup(curMode);
 
   //setup toggles
@@ -24,7 +23,6 @@ export const colorMode = () => {
       const targetMode = target.dataset.xmode as string;
 
       updateColorSetup(targetMode);
-      localStorage.setItem('cmode', targetMode);
     });
   }
 
@@ -49,26 +47,66 @@ export const colorMode = () => {
       const getVar = style.getPropertyValue(`--xmode-${mode}--${item}`);
       colorSetup[item] = getVar;
     }
-
+    localStorage.setItem('cmode', mode);
     setColor();
   }
 
   function setColor() {
-    console.log('SET', colorSetup);
-    const body = document.querySelector('[data-cmode-main]');
+    console.log('SET', colorSetup, localStorage.getItem('cmode'));
+    const body = document.querySelector('body');
+    const secondaryElements = [...document.querySelectorAll('.mode_secondary')];
     const glassElements = [...document.querySelectorAll('.mode_glass-effect')];
+    const borderElements = [...document.querySelectorAll('.mode_border')];
+    const buttonElements = [...document.querySelectorAll('a')];
+    const glyphElements = [...document.querySelectorAll('.ss-glyph_path')];
+
+    console.log(buttonElements);
 
     gsap.to(body, {
-      duration: 0.5,
       backgroundColor: colorSetup['primary'],
       color: colorSetup['invert-p'],
       ease: 'power4.out',
     });
-    gsap.to(glassElements, {
-      duration: 0.5,
-      backgroundColor: colorSetup['glass'],
-      borderColor: colorSetup['invert-p'],
-      ease: 'power4.out',
-    });
+
+    if (secondaryElements.length > 0) {
+      gsap.to(secondaryElements, { backgroundColor: colorSetup['secondary'], ease: 'power4.out' });
+    }
+
+    if (glassElements.length > 0) {
+      gsap.to(glassElements, {
+        backgroundColor: colorSetup['glass'],
+        ease: 'power4.out',
+      });
+    }
+
+    if (borderElements.length > 0) {
+      gsap.to(borderElements, {
+        borderColor: colorSetup['invert-p'],
+        ease: 'power4.out',
+      });
+    }
+
+    if (buttonElements.length > 0) {
+      console.log(buttonElements);
+      gsap.to(buttonElements, {
+        color: colorSetup['invert-p'],
+        ease: 'power4.out',
+      });
+
+      for (const i in buttonElements) {
+        if (buttonElements[i].classList.contains('nav_link')) {
+          if (buttonElements[i].classList.contains('w--current')) {
+            gsap.to(buttonElements[i], { borderColor: colorSetup['invert-p'], ease: 'power4.out' });
+          } else {
+            const createHover = ``;
+            buttonElements[i].classList.add('mode_dark');
+          }
+        }
+      }
+    }
+
+    if (glyphElements.length > 0) {
+      gsap.to(glyphElements, { fill: colorSetup['invert-p'], ease: 'power4.out' });
+    }
   }
 };
