@@ -6501,7 +6501,8 @@
       secondary: "",
       "invert-p": "",
       "invert-s": "",
-      glass: ""
+      glass: "",
+      accent: ""
     };
     const curMode = getCurrentColorMode();
     const modeToggles = [...document.querySelectorAll(".mode-toggle_indicator")];
@@ -6536,14 +6537,14 @@
       setColor();
     }
     function setColor() {
-      console.log("SET", colorSetup, localStorage.getItem("cmode"));
       const body = document.querySelector("body");
       const secondaryElements = [...document.querySelectorAll(".mode_secondary")];
+      const accentElements = [...document.querySelectorAll(".mode_accent")];
       const glassElements = [...document.querySelectorAll(".mode_glass-effect")];
       const borderElements = [...document.querySelectorAll(".mode_border")];
       const buttonElements = [...document.querySelectorAll("a")];
       const glyphElements = [...document.querySelectorAll(".ss-glyph_path")];
-      console.log(buttonElements);
+      const logoElements = [...document.querySelectorAll(".mode_logo")];
       gsapWithCSS.to(body, {
         backgroundColor: colorSetup["primary"],
         color: colorSetup["invert-p"],
@@ -6551,6 +6552,9 @@
       });
       if (secondaryElements.length > 0) {
         gsapWithCSS.to(secondaryElements, { backgroundColor: colorSetup["secondary"], ease: "power4.out" });
+      }
+      if (accentElements.length > 0) {
+        gsapWithCSS.to(accentElements, { backgroundColor: colorSetup["accent"], ease: "power4.out" });
       }
       if (glassElements.length > 0) {
         gsapWithCSS.to(glassElements, {
@@ -6578,11 +6582,23 @@
               const createHover = ``;
               buttonElements[i].classList.add("mode_dark");
             }
+          } else if (buttonElements[i].classList.contains("button")) {
+            gsapWithCSS.to(buttonElements[i], {
+              backgroundColor: colorSetup["glass"],
+              borderColor: colorSetup["invert-p"],
+              ease: "power4.out"
+            });
           }
         }
       }
       if (glyphElements.length > 0) {
         gsapWithCSS.to(glyphElements, { fill: colorSetup["invert-p"], ease: "power4.out" });
+      }
+      if (logoElements.length > 0) {
+        for (const i in logoElements) {
+          const temp = logoElements[i];
+          gsapWithCSS.to(temp.children[1], { fill: colorSetup["accent"] });
+        }
       }
     }
   };
