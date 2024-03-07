@@ -4253,6 +4253,24 @@
     }
   };
 
+  // src/components/nav.ts
+  var nav = () => {
+    const nav2 = document.querySelector(".nav_component");
+    const linkHoverElement = nav2.querySelector(".nav_hover");
+    hover();
+    function hover() {
+      const navLinks = [...nav2.querySelectorAll(".nav_link")];
+      for (const i in navLinks) {
+        const setLink = navLinks[i];
+        setLink.addEventListener("mouseover", (e) => {
+          const target = e.target;
+          const bounds = target.getBoundingClientRect();
+          console.log(bounds.left);
+        });
+      }
+    }
+  };
+
   // node_modules/gsap/Observer.js
   function _defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
@@ -6491,6 +6509,7 @@
 
   // src/pages/home.ts
   var home = () => {
+    nav();
     timeModule();
   };
 
@@ -6580,7 +6599,6 @@
               gsapWithCSS.to(buttonElements[i], { borderColor: colorSetup["invert-p"], ease: "power4.out" });
             } else {
               const createHover = ``;
-              buttonElements[i].classList.add("mode_dark");
             }
           } else if (buttonElements[i].classList.contains("button")) {
             gsapWithCSS.to(buttonElements[i], {
@@ -6596,8 +6614,8 @@
       }
       if (logoElements.length > 0) {
         for (const i in logoElements) {
-          const temp = logoElements[i];
-          gsapWithCSS.to(temp.children[1], { fill: colorSetup["accent"] });
+          const temp = logoElements[i].children[1];
+          gsapWithCSS.to(temp, { fill: colorSetup["accent"] });
         }
       }
     }

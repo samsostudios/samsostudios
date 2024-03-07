@@ -105,7 +105,7 @@ export const colorMode = () => {
           } else {
             // FINISH - MODE NAV HOVER
             const createHover = ``;
-            buttonElements[i].classList.add('mode_dark');
+            // buttonElements[i].classList.add('mode_dark');
           }
         } else if (buttonElements[i].classList.contains('button')) {
           gsap.to(buttonElements[i], {
@@ -123,8 +123,8 @@ export const colorMode = () => {
 
     if (logoElements.length > 0) {
       for (const i in logoElements) {
-        const temp = logoElements[i] as HTMLElement;
-        gsap.to(temp.children[1], { fill: colorSetup['accent'] });
+        const temp = logoElements[i].children[1] as HTMLElement;
+        gsap.to(temp, { fill: colorSetup['accent'] });
       }
     }
   }
