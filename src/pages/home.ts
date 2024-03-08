@@ -8,5 +8,5 @@ export const home = () => {
   // Page Modules
   // homeScroll();
   nav();
-  timeModule();
+  // timeModule();
 };

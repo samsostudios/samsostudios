@@ -32,10 +32,8 @@ export const colorMode = () => {
     const modeHistory = localStorage.getItem('cmode');
 
     if (modeHistory === null) {
-      console.log('setting default mode');
       localStorage.setItem('cmode', defaultMode);
     } else if (modeHistory !== defaultMode) {
-      console.log('switch initial mode');
       defaultMode = modeHistory;
     }
 
@@ -53,8 +51,8 @@ export const colorMode = () => {
   }
 
   function setColor() {
-    // console.log('SET', colorSetup, localStorage.getItem('cmode'));
     const body = document.querySelector('body');
+    const navHover = document.querySelector('.nav_hover');
     const secondaryElements = [...document.querySelectorAll('.mode_secondary')];
     const accentElements = [...document.querySelectorAll('.mode_accent')];
     const glassElements = [...document.querySelectorAll('.mode_glass-effect')];
@@ -68,6 +66,8 @@ export const colorMode = () => {
       color: colorSetup['invert-p'],
       ease: 'power4.out',
     });
+
+    gsap.to(navHover, { borderColor: colorSetup['invert-p'], ease: 'power4.out' });
 
     if (secondaryElements.length > 0) {
       gsap.to(secondaryElements, { backgroundColor: colorSetup['secondary'], ease: 'power4.out' });
@@ -92,7 +92,6 @@ export const colorMode = () => {
     }
 
     if (buttonElements.length > 0) {
-      console.log(buttonElements);
       gsap.to(buttonElements, {
         color: colorSetup['invert-p'],
         ease: 'power4.out',
@@ -101,11 +100,12 @@ export const colorMode = () => {
       for (const i in buttonElements) {
         if (buttonElements[i].classList.contains('nav_link')) {
           if (buttonElements[i].classList.contains('w--current')) {
-            gsap.to(buttonElements[i], { borderColor: colorSetup['invert-p'], ease: 'power4.out' });
+            gsap.to(buttonElements[i], {
+              backgroundColor: colorSetup['primary'],
+              borderColor: colorSetup['invert-p'],
+              ease: 'power4.out',
+            });
           } else {
-            // FINISH - MODE NAV HOVER
-            const createHover = ``;
-            // buttonElements[i].classList.add('mode_dark');
           }
         } else if (buttonElements[i].classList.contains('button')) {
           gsap.to(buttonElements[i], {

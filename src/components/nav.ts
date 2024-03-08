@@ -1,13 +1,21 @@
+// eslint-disable-next-line simple-import-sort/imports
+import { timeModule } from '$utils/fomattedTime';
 import { gsap } from 'gsap';
 
 export const nav = () => {
   const nav = document.querySelector('.nav_component') as HTMLElement;
-  const linkHoverElement = nav.querySelector('.nav_hover') as HTMLElement;
 
+  timeModule();
   hover();
 
   function hover() {
+    const linkWrap = nav.querySelector('.nav_main') as HTMLElement;
     const navLinks = [...nav.querySelectorAll('.nav_link')];
+    const linkHoverElement = nav.querySelector('.nav_hover') as HTMLElement;
+
+    const wrapBounds = linkWrap.getBoundingClientRect();
+
+    gsap.set(linkHoverElement, { opacity: 0, width: navLinks[0].clientWidth });
 
     for (const i in navLinks) {
       const setLink = navLinks[i] as HTMLElement;
@@ -15,21 +23,19 @@ export const nav = () => {
       setLink.addEventListener('mouseover', (e) => {
         const target = e.target as HTMLElement;
         const bounds = target.getBoundingClientRect();
-        console.log(bounds.left);
+        gsap.to(linkHoverElement, { opacity: 0.5 });
+        gsap.to(linkHoverElement, {
+          width: target.clientWidth,
+          x: bounds.left - wrapBounds.left,
+          ease: 'back.inOut(1.7)',
+        });
       });
     }
-    // const linkWrap = nav.querySelector('.nav_main') as HTMLElement;
-    // const linkHoverElement = nav.querySelector('.nav_hover') as HTMLElement;
-    // const bounds = linkWrap.getBoundingClientRect();
-    // const boundOffset = linkHoverElement.clientWidth / 2;
-    // console.log('movement range', bounds.right - bounds.left);
-    // // console.log(linkHoverElement.clientWidth);
-    // // gsap.set(linkHoverElement, { xPercent: -50 });
-    // // gsap.to(linkHoverElement, { x: linkHoverElement.clientWidth / 2 });
-    // linkWrap.addEventListener('mousemove', (e: MouseEvent) => {
-    //   //   console.log(e.x);
-    //   console.log('cur x', e.x - bounds.left);
-    //   gsap.to(linkHoverElement, { x: e.x - bounds.left - boundOffset });
-    // });
+
+    linkWrap.addEventListener('mouseleave', () => {
+      const tl = gsap.timeline();
+      tl.to(linkHoverElement, { opacity: 0 });
+      tl.to(linkHoverElement, { width: navLinks[0].clientWidth, x: 0 });
+    });
   }
 };

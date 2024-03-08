@@ -4253,21 +4253,61 @@
     }
   };
 
+  // src/utils/fomattedTime.ts
+  var getTime = () => {
+    const now = /* @__PURE__ */ new Date();
+    const hours = now.getHours() % 12 || 12;
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+    const period = hours >= 12 ? "PM" : "AM";
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${period}`;
+    return formattedTime;
+  };
+  var timeModule = () => {
+    const timeModule3 = document.querySelector(".info-module_component.is-time");
+    function updateModule() {
+      const now = /* @__PURE__ */ new Date();
+      const hours = now.getHours() % 12 || 12;
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+      const period = now.getHours() >= 12 ? "PM" : "AM";
+      console.log(period);
+      const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${period}`;
+      timeModule3.children[0].innerHTML = formattedTime;
+      setTimeout(updateModule, 1e3);
+    }
+    updateModule();
+  };
+
   // src/components/nav.ts
   var nav = () => {
     const nav2 = document.querySelector(".nav_component");
-    const linkHoverElement = nav2.querySelector(".nav_hover");
+    timeModule();
     hover();
     function hover() {
+      const linkWrap = nav2.querySelector(".nav_main");
       const navLinks = [...nav2.querySelectorAll(".nav_link")];
+      const linkHoverElement = nav2.querySelector(".nav_hover");
+      const wrapBounds = linkWrap.getBoundingClientRect();
+      gsapWithCSS.set(linkHoverElement, { opacity: 0, width: navLinks[0].clientWidth });
       for (const i in navLinks) {
         const setLink = navLinks[i];
         setLink.addEventListener("mouseover", (e) => {
           const target = e.target;
           const bounds = target.getBoundingClientRect();
-          console.log(bounds.left);
+          gsapWithCSS.to(linkHoverElement, { opacity: 0.5 });
+          gsapWithCSS.to(linkHoverElement, {
+            width: target.clientWidth,
+            x: bounds.left - wrapBounds.left,
+            ease: "back.inOut(1.7)"
+          });
         });
       }
+      linkWrap.addEventListener("mouseleave", () => {
+        const tl = gsapWithCSS.timeline();
+        tl.to(linkHoverElement, { opacity: 0 });
+        tl.to(linkHoverElement, { width: navLinks[0].clientWidth, x: 0 });
+      });
     }
   };
 
@@ -6482,35 +6522,9 @@
   // src/modules/homeScroll.ts
   gsapWithCSS.registerPlugin(ScrollTrigger2);
 
-  // src/utils/fomattedTime.ts
-  var getTime = () => {
-    const now = /* @__PURE__ */ new Date();
-    const hours = now.getHours() % 12 || 12;
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    const period = hours >= 12 ? "PM" : "AM";
-    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${period}`;
-    return formattedTime;
-  };
-  var timeModule = () => {
-    const timeModule2 = document.querySelector(".info-module_component.is-time");
-    function updateModule() {
-      const now = /* @__PURE__ */ new Date();
-      const hours = now.getHours() % 12 || 12;
-      const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
-      const period = hours >= 12 ? "PM" : "AM";
-      const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${period}`;
-      timeModule2.children[0].innerHTML = formattedTime;
-      setTimeout(updateModule, 1e3);
-    }
-    updateModule();
-  };
-
   // src/pages/home.ts
   var home = () => {
     nav();
-    timeModule();
   };
 
   // src/utils/colorMode.ts
@@ -6538,10 +6552,8 @@
       let defaultMode = "d";
       const modeHistory = localStorage.getItem("cmode");
       if (modeHistory === null) {
-        console.log("setting default mode");
         localStorage.setItem("cmode", defaultMode);
       } else if (modeHistory !== defaultMode) {
-        console.log("switch initial mode");
         defaultMode = modeHistory;
       }
       return defaultMode;
@@ -6557,6 +6569,7 @@
     }
     function setColor() {
       const body = document.querySelector("body");
+      const navHover = document.querySelector(".nav_hover");
       const secondaryElements = [...document.querySelectorAll(".mode_secondary")];
       const accentElements = [...document.querySelectorAll(".mode_accent")];
       const glassElements = [...document.querySelectorAll(".mode_glass-effect")];
@@ -6569,6 +6582,7 @@
         color: colorSetup["invert-p"],
         ease: "power4.out"
       });
+      gsapWithCSS.to(navHover, { borderColor: colorSetup["invert-p"], ease: "power4.out" });
       if (secondaryElements.length > 0) {
         gsapWithCSS.to(secondaryElements, { backgroundColor: colorSetup["secondary"], ease: "power4.out" });
       }
@@ -6588,7 +6602,6 @@
         });
       }
       if (buttonElements.length > 0) {
-        console.log(buttonElements);
         gsapWithCSS.to(buttonElements, {
           color: colorSetup["invert-p"],
           ease: "power4.out"
@@ -6596,9 +6609,12 @@
         for (const i in buttonElements) {
           if (buttonElements[i].classList.contains("nav_link")) {
             if (buttonElements[i].classList.contains("w--current")) {
-              gsapWithCSS.to(buttonElements[i], { borderColor: colorSetup["invert-p"], ease: "power4.out" });
+              gsapWithCSS.to(buttonElements[i], {
+                backgroundColor: colorSetup["primary"],
+                borderColor: colorSetup["invert-p"],
+                ease: "power4.out"
+              });
             } else {
-              const createHover = ``;
             }
           } else if (buttonElements[i].classList.contains("button")) {
             gsapWithCSS.to(buttonElements[i], {
@@ -6626,7 +6642,6 @@
   window.Webflow.push(() => {
     const time = getTime();
     console.log("// \u{1F30E} -- " + time + " //");
-    console.log("test");
     siteFrame();
     colorMode();
     const windowLocation = window.location.pathname;

@@ -20,7 +20,9 @@ export const timeModule = () => {
     const hours = now.getHours() % 12 || 12;
     const minutes = now.getMinutes();
     const seconds = now.getSeconds();
-    const period = hours >= 12 ? 'PM' : 'AM';
+    const period = now.getHours() >= 12 ? 'PM' : 'AM';
+
+    console.log(period);
 
     const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
