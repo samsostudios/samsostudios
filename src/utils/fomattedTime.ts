@@ -22,8 +22,6 @@ export const timeModule = () => {
     const seconds = now.getSeconds();
     const period = now.getHours() >= 12 ? 'PM' : 'AM';
 
-    console.log(period);
-
     const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${period}`;

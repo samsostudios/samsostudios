@@ -87,7 +87,7 @@ export const gridScroll = () => {
     const itemTotal = gridItems.length;
     const itemPerRow = 4;
 
-    console.log('MOD', itemTotal % itemPerRow);
+    console.log('MOD', itemTotal / 2);
 
     const spacerArrangments = [
       [1, 0, 0, 1],
@@ -103,15 +103,15 @@ export const gridScroll = () => {
     // gridList.appendChild(spacerItem);
     // const rowTotal = itemTotal / itemPerRow;
 
-    for (let i = 0; i < 2; i++) {
-      console.log('ROW', i + 1, spacerArrangments[i]);
+    for (let i = 0; i < itemTotal / 2; i++) {
+      console.log('ROW', i, spacerArrangments[i]);
 
       const rowLayout = spacerArrangments[i];
 
       // console.log('HERE', rowArrangment);
 
       for (let j = 0; j < rowLayout.length; j++) {
-        console.log('value', rowLayout[j]);
+        // console.log('value', rowLayout[j]);
         const layoutValue = rowLayout[j];
 
         if (layoutValue === 0) {
@@ -121,7 +121,7 @@ export const gridScroll = () => {
 
           const insertIndex = itemPerRow * i + j;
 
-          console.log('insert before', insertIndex, i, j);
+          // console.log('insert before', insertIndex, i, j);
           // console.log('LB', gridList);
 
           gridList.insertBefore(spacerItem, gridList.childNodes[insertIndex]);

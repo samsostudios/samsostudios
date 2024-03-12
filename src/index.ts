@@ -1,6 +1,8 @@
-import { siteFrame } from '$components/siteFrame';
+import { frame } from '$components/frame';
+import { nav } from '$components/nav';
+import { colorMode } from '$modules/colorMode';
+import { cursor } from '$modules/cursor';
 import { home } from '$pages/home';
-import { colorMode } from '$utils/colorMode';
 import { getTime } from '$utils/fomattedTime';
 
 window.Webflow ||= [];
@@ -9,8 +11,10 @@ window.Webflow.push(() => {
   console.log('// 🌎 -- ' + time + ' //');
 
   // Global Modules
-  siteFrame();
+  frame();
   colorMode();
+  cursor();
+  nav();
 
   // Page Routing
   const windowLocation = window.location.pathname as string;

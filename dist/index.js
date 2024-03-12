@@ -949,13 +949,13 @@
   var _tickerActive;
   var _ticker = function() {
     var _getTime3 = Date.now, _lagThreshold = 500, _adjustedLag = 33, _startTime = _getTime3(), _lastUpdate = _startTime, _gap = 1e3 / 240, _nextTime = _gap, _listeners3 = [], _id, _req, _raf, _self, _delta, _i2, _tick = function _tick2(v) {
-      var elapsed = _getTime3() - _lastUpdate, manual = v === true, overlap, dispatch, time, frame;
+      var elapsed = _getTime3() - _lastUpdate, manual = v === true, overlap, dispatch, time, frame2;
       elapsed > _lagThreshold && (_startTime += elapsed - _adjustedLag);
       _lastUpdate += elapsed;
       time = _lastUpdate - _startTime;
       overlap = time - _nextTime;
       if (overlap > 0 || manual) {
-        frame = ++_self.frame;
+        frame2 = ++_self.frame;
         _delta = time - _self.time * 1e3;
         _self.time = time = time / 1e3;
         _nextTime += overlap + (overlap >= _gap ? 4 : _gap - overlap);
@@ -964,7 +964,7 @@
       manual || (_id = _req(_tick2));
       if (dispatch) {
         for (_i2 = 0; _i2 < _listeners3.length; _i2++) {
-          _listeners3[_i2](time, _delta, frame, v);
+          _listeners3[_i2](time, _delta, frame2, v);
         }
       }
     };
@@ -2278,8 +2278,8 @@
           tl._ease = _parseEase(keyframes.ease || vars.ease || "none");
           var time = 0, a, kf, v;
           if (_isArray(keyframes)) {
-            keyframes.forEach(function(frame) {
-              return tl.to(parsedTargets, frame, ">");
+            keyframes.forEach(function(frame2) {
+              return tl.to(parsedTargets, frame2, ">");
             });
             tl.duration();
           } else {
@@ -4215,29 +4215,28 @@
   var gsapWithCSS = gsap.registerPlugin(CSSPlugin) || gsap;
   var TweenMaxWithCSS = gsapWithCSS.core.Tween;
 
-  // src/components/siteFrame.ts
-  var siteFrame = () => {
-    const siteFrame2 = document.querySelector(".frame_fill");
+  // src/components/frame.ts
+  var frame = () => {
+    const siteFrame = document.querySelector(".frame_fill");
     const frameBorder = document.querySelector(".frame_stroke");
     setup();
     window.addEventListener("resize", () => {
       setup();
     });
     function setup() {
-      const scaleData = siteFrame2.dataset.frameScale;
+      const scaleData = siteFrame.dataset.frameScale;
       const frameScale = parseFloat(scaleData);
       const frameTarget = window.innerWidth * frameScale;
       const frameMaxWidth = window.innerWidth - frameTarget;
       const frameMaxHeight = window.innerHeight - frameTarget;
       const ogFrame = `polygon(0% 0%, 0% 100%, 1% 100%, 1% 1%, 99% 1%, 99% 99%, 1% 99%, 0% 100%, 100% 100%, 100% 0%)`;
       const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${frameMaxHeight}px, ${frameTarget}px ${frameMaxHeight}px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
-      gsapWithCSS.to(siteFrame2, { duration: 0, clipPath: frameClip });
+      gsapWithCSS.to(siteFrame, { duration: 0, clipPath: frameClip });
       gsapWithCSS.to(frameBorder, {
         duration: 0,
         width: `${frameMaxWidth - frameTarget}px`,
         height: `${frameMaxHeight - frameTarget}px`
       });
-      guides(frameTarget);
     }
     function guides(calc) {
       const frameGuides = [...document.querySelectorAll(".frame_guide")];
@@ -4271,7 +4270,6 @@
       const minutes = now.getMinutes();
       const seconds = now.getSeconds();
       const period = now.getHours() >= 12 ? "PM" : "AM";
-      console.log(period);
       const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${period}`;
       timeModule3.children[0].innerHTML = formattedTime;
       setTimeout(updateModule, 1e3);
@@ -4281,13 +4279,13 @@
 
   // src/components/nav.ts
   var nav = () => {
-    const nav2 = document.querySelector(".nav_component");
+    const nav3 = document.querySelector(".nav_component");
     timeModule();
     hover();
     function hover() {
-      const linkWrap = nav2.querySelector(".nav_main");
-      const navLinks = [...nav2.querySelectorAll(".nav_link")];
-      const linkHoverElement = nav2.querySelector(".nav_hover");
+      const linkWrap = nav3.querySelector(".nav_main");
+      const navLinks = [...nav3.querySelectorAll(".nav_link")];
+      const linkHoverElement = nav3.querySelector(".nav_hover");
       const wrapBounds = linkWrap.getBoundingClientRect();
       gsapWithCSS.set(linkHoverElement, { opacity: 0, width: navLinks[0].clientWidth });
       for (const i in navLinks) {
@@ -4309,6 +4307,147 @@
         tl.to(linkHoverElement, { width: navLinks[0].clientWidth, x: 0 });
       });
     }
+  };
+
+  // src/modules/colorMode.ts
+  var colorMode = () => {
+    const colorSetup = {
+      primary: "",
+      secondary: "",
+      "invert-p": "",
+      "invert-s": "",
+      glass: "",
+      accent: ""
+    };
+    const curMode = getCurrentColorMode();
+    const modeToggles = [...document.querySelectorAll(".mode-toggle_indicator")];
+    updateColorSetup(curMode);
+    for (let i = 0; i < modeToggles.length - 1; i++) {
+      const temp = modeToggles[i];
+      temp.addEventListener("click", (e) => {
+        const target = e.target;
+        const targetMode = target.dataset.xmode;
+        updateColorSetup(targetMode);
+      });
+    }
+    function getCurrentColorMode() {
+      let defaultMode = "d";
+      const modeHistory = localStorage.getItem("cmode");
+      if (modeHistory === null) {
+        localStorage.setItem("cmode", defaultMode);
+      } else if (modeHistory !== defaultMode) {
+        defaultMode = modeHistory;
+      }
+      return defaultMode;
+    }
+    function updateColorSetup(mode) {
+      const style = getComputedStyle(document.body);
+      for (const item in colorSetup) {
+        const getVar = style.getPropertyValue(`--xmode-${mode}--${item}`);
+        colorSetup[item] = getVar;
+      }
+      localStorage.setItem("cmode", mode);
+      setColor();
+    }
+    function setColor() {
+      const body = document.querySelector("body");
+      const navHover = document.querySelector(".nav_hover");
+      const secondaryElements = [...document.querySelectorAll(".mode_secondary")];
+      const accentElements = [...document.querySelectorAll(".mode_accent")];
+      const glassElements = [...document.querySelectorAll(".mode_glass-effect")];
+      const borderElements = [...document.querySelectorAll(".mode_border")];
+      const buttonElements = [...document.querySelectorAll("a")];
+      const glyphElements = [...document.querySelectorAll(".ss-glyph_path")];
+      const logoElements = [...document.querySelectorAll(".mode_logo")];
+      const cursorElement = document.querySelector(".cursor_component");
+      gsapWithCSS.to(body, {
+        backgroundColor: colorSetup["primary"],
+        color: colorSetup["invert-p"],
+        ease: "power4.out"
+      });
+      gsapWithCSS.to(navHover, { borderColor: colorSetup["invert-p"], ease: "power4.out" });
+      if (secondaryElements.length > 0) {
+        gsapWithCSS.to(secondaryElements, { backgroundColor: colorSetup["secondary"], ease: "power4.out" });
+      }
+      if (accentElements.length > 0) {
+        gsapWithCSS.to(accentElements, { backgroundColor: colorSetup["accent"], ease: "power4.out" });
+      }
+      if (glassElements.length > 0) {
+        gsapWithCSS.to(glassElements, {
+          backgroundColor: colorSetup["glass"],
+          ease: "power4.out"
+        });
+      }
+      if (borderElements.length > 0) {
+        gsapWithCSS.to(borderElements, {
+          borderColor: colorSetup["invert-p"],
+          ease: "power4.out"
+        });
+      }
+      if (buttonElements.length > 0) {
+        gsapWithCSS.to(buttonElements, {
+          color: colorSetup["invert-p"],
+          ease: "power4.out"
+        });
+        for (const i in buttonElements) {
+          if (buttonElements[i].classList.contains("nav_link")) {
+            if (buttonElements[i].classList.contains("w--current")) {
+              gsapWithCSS.to(buttonElements[i], {
+                backgroundColor: colorSetup["primary"],
+                borderColor: colorSetup["invert-p"],
+                ease: "power4.out"
+              });
+            } else {
+            }
+          } else if (buttonElements[i].classList.contains("button")) {
+            gsapWithCSS.to(buttonElements[i], {
+              backgroundColor: colorSetup["glass"],
+              borderColor: colorSetup["invert-p"],
+              ease: "power4.out"
+            });
+          }
+        }
+      }
+      if (glyphElements.length > 0) {
+        gsapWithCSS.to(glyphElements, { fill: colorSetup["invert-p"], ease: "power4.out" });
+      }
+      if (logoElements.length > 0) {
+        for (const i in logoElements) {
+          const logoFill = logoElements[i].querySelector(".is-fill");
+          const logoOutline = logoElements[i].querySelector(".is-outline");
+          const logoLetters = [...logoElements[i].querySelectorAll(".is-letter")];
+          gsapWithCSS.to(logoFill, { fill: colorSetup["accent"] });
+          gsapWithCSS.to(logoLetters, { fill: colorSetup["invert-p"] });
+        }
+      }
+      if (cursorElement !== void 0) {
+        gsapWithCSS.to(cursorElement.children[0], { borderColor: colorSetup["invert-p"] });
+        gsapWithCSS.to(cursorElement.children[1], { backgroundColor: colorSetup["invert-p"] });
+      }
+    }
+  };
+
+  // src/modules/cursor.ts
+  var cursor = () => {
+    const cursor2 = document.querySelector(".cursor_component");
+    const cursorSpeed = parseFloat(cursor2.dataset["cursorSpeed"]);
+    gsapWithCSS.set(cursor2, { xPercent: -50, yPercent: 0 });
+    const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    const mouse = { x: pos.x, y: pos.y };
+    const speed = 0.2;
+    const xSet = gsapWithCSS.quickSetter(cursor2, "x", "px");
+    const ySet = gsapWithCSS.quickSetter(cursor2, "y", "px");
+    window.addEventListener("mousemove", (e) => {
+      mouse.x = e.x;
+      mouse.y = e.y;
+    });
+    gsapWithCSS.ticker.add(() => {
+      const dt = 1 - Math.pow(1 - speed, gsapWithCSS.ticker.deltaRatio());
+      pos.x += (mouse.x - pos.x) * cursorSpeed * dt;
+      pos.y += (mouse.y - pos.y) * cursorSpeed * dt - 0.5;
+      xSet(pos.x);
+      ySet(pos.y);
+    });
   };
 
   // node_modules/gsap/Observer.js
@@ -6519,122 +6658,102 @@
   };
   _getGSAP3() && gsap3.registerPlugin(ScrollTrigger2);
 
-  // src/modules/homeScroll.ts
+  // src/components/homeScroll.ts
   gsapWithCSS.registerPlugin(ScrollTrigger2);
-
-  // src/pages/home.ts
-  var home = () => {
-    nav();
+  var homeScroll = () => {
+    const viewSwitch = document.querySelector(".info-module_component");
+    init4();
+    handleSwitch();
+    function init4() {
+      const viewTypes = ["slide", "grid"];
+      const defaultView = viewTypes[1];
+      if (defaultView === "slide") {
+        slideScroll();
+      } else {
+        gridScroll();
+      }
+    }
+    function handleSwitch() {
+      let viewToggled = false;
+      viewSwitch.addEventListener("click", () => {
+        viewToggled = !viewToggled;
+        if (viewToggled) {
+          console.log("show grid");
+        } else {
+          console.log("show slide");
+        }
+      });
+    }
   };
-
-  // src/utils/colorMode.ts
-  var colorMode = () => {
-    const colorSetup = {
-      primary: "",
-      secondary: "",
-      "invert-p": "",
-      "invert-s": "",
-      glass: "",
-      accent: ""
-    };
-    const curMode = getCurrentColorMode();
-    const modeToggles = [...document.querySelectorAll(".mode-toggle_indicator")];
-    updateColorSetup(curMode);
-    for (let i = 0; i < modeToggles.length - 1; i++) {
-      const temp = modeToggles[i];
-      temp.addEventListener("click", (e) => {
-        const target = e.target;
-        const targetMode = target.dataset.xmode;
-        updateColorSetup(targetMode);
+  var slideScroll = () => {
+    init4();
+    slideScroller();
+    window.addEventListener("resize", () => {
+      init4();
+    });
+    function init4() {
+      const nav3 = document.querySelector(".nav_component");
+      const slideHeader = document.querySelector(".home-header_component");
+      const slideWrapper = document.querySelector(".home-slide_component");
+      const slideList = document.querySelector(".home-slide_list");
+      const slideItems = [...document.querySelectorAll(".home-slide_item")];
+      const slideGap = 16;
+      const slideActiveRatio = 0.7;
+      const slideHeight = nav3.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom - slideGap * 2;
+      const slideActiveWidth = slideList.clientWidth * slideActiveRatio - slideGap / 2;
+      const slideNextWidth = slideList.clientWidth * (1 - slideActiveRatio) - slideGap / 2;
+      gsapWithCSS.set(slideWrapper, { height: slideHeight });
+      slideItems.forEach((e, i) => {
+        const isFirst = i === 0;
+        gsapWithCSS.set(e, { position: "absolute" });
+        if (isFirst) {
+          gsapWithCSS.set(e, { width: slideActiveWidth });
+        }
+        if (!isFirst) {
+          gsapWithCSS.set(e, { width: slideNextWidth, right: 0 });
+        }
       });
     }
-    function getCurrentColorMode() {
-      let defaultMode = "d";
-      const modeHistory = localStorage.getItem("cmode");
-      if (modeHistory === null) {
-        localStorage.setItem("cmode", defaultMode);
-      } else if (modeHistory !== defaultMode) {
-        defaultMode = modeHistory;
-      }
-      return defaultMode;
+    function slideScroller() {
     }
-    function updateColorSetup(mode) {
-      const style = getComputedStyle(document.body);
-      for (const item in colorSetup) {
-        const getVar = style.getPropertyValue(`--xmode-${mode}--${item}`);
-        colorSetup[item] = getVar;
-      }
-      localStorage.setItem("cmode", mode);
-      setColor();
-    }
-    function setColor() {
-      const body = document.querySelector("body");
-      const navHover = document.querySelector(".nav_hover");
-      const secondaryElements = [...document.querySelectorAll(".mode_secondary")];
-      const accentElements = [...document.querySelectorAll(".mode_accent")];
-      const glassElements = [...document.querySelectorAll(".mode_glass-effect")];
-      const borderElements = [...document.querySelectorAll(".mode_border")];
-      const buttonElements = [...document.querySelectorAll("a")];
-      const glyphElements = [...document.querySelectorAll(".ss-glyph_path")];
-      const logoElements = [...document.querySelectorAll(".mode_logo")];
-      gsapWithCSS.to(body, {
-        backgroundColor: colorSetup["primary"],
-        color: colorSetup["invert-p"],
-        ease: "power4.out"
-      });
-      gsapWithCSS.to(navHover, { borderColor: colorSetup["invert-p"], ease: "power4.out" });
-      if (secondaryElements.length > 0) {
-        gsapWithCSS.to(secondaryElements, { backgroundColor: colorSetup["secondary"], ease: "power4.out" });
-      }
-      if (accentElements.length > 0) {
-        gsapWithCSS.to(accentElements, { backgroundColor: colorSetup["accent"], ease: "power4.out" });
-      }
-      if (glassElements.length > 0) {
-        gsapWithCSS.to(glassElements, {
-          backgroundColor: colorSetup["glass"],
-          ease: "power4.out"
-        });
-      }
-      if (borderElements.length > 0) {
-        gsapWithCSS.to(borderElements, {
-          borderColor: colorSetup["invert-p"],
-          ease: "power4.out"
-        });
-      }
-      if (buttonElements.length > 0) {
-        gsapWithCSS.to(buttonElements, {
-          color: colorSetup["invert-p"],
-          ease: "power4.out"
-        });
-        for (const i in buttonElements) {
-          if (buttonElements[i].classList.contains("nav_link")) {
-            if (buttonElements[i].classList.contains("w--current")) {
-              gsapWithCSS.to(buttonElements[i], {
-                backgroundColor: colorSetup["primary"],
-                borderColor: colorSetup["invert-p"],
-                ease: "power4.out"
-              });
-            } else {
-            }
-          } else if (buttonElements[i].classList.contains("button")) {
-            gsapWithCSS.to(buttonElements[i], {
-              backgroundColor: colorSetup["glass"],
-              borderColor: colorSetup["invert-p"],
-              ease: "power4.out"
-            });
+  };
+  var gridScroll = () => {
+    console.log("gridScroll");
+    init4();
+    function init4() {
+      const gridItems = [...document.querySelectorAll(".home-grid_item")];
+      const itemTotal = gridItems.length;
+      const itemPerRow = 4;
+      console.log("MOD", itemTotal / 2);
+      const spacerArrangments = [
+        [1, 0, 0, 1],
+        [0, 0, 1, 1],
+        [1, 0, 1, 0],
+        [0, 1, 0, 1],
+        [1, 1, 0, 0]
+      ];
+      const spacerItem = document.createElement("div");
+      spacerItem.classList.add("home-grid_item", "is-spacer");
+      for (let i = 0; i < itemTotal / 2; i++) {
+        console.log("ROW", i, spacerArrangments[i]);
+        const rowLayout = spacerArrangments[i];
+        for (let j = 0; j < rowLayout.length; j++) {
+          const layoutValue = rowLayout[j];
+          if (layoutValue === 0) {
+            const gridList = document.querySelector(".home-grid_list");
+            const spacerItem2 = document.createElement("div");
+            spacerItem2.classList.add("home-grid_item", "is-spacer");
+            const insertIndex = itemPerRow * i + j;
+            gridList.insertBefore(spacerItem2, gridList.childNodes[insertIndex]);
           }
         }
       }
-      if (glyphElements.length > 0) {
-        gsapWithCSS.to(glyphElements, { fill: colorSetup["invert-p"], ease: "power4.out" });
-      }
-      if (logoElements.length > 0) {
-        for (const i in logoElements) {
-          const temp = logoElements[i].children[1];
-          gsapWithCSS.to(temp, { fill: colorSetup["accent"] });
-        }
-      }
     }
+  };
+
+  // src/pages/home.ts
+  var home = () => {
+    homeScroll();
   };
 
   // src/index.ts
@@ -6642,8 +6761,10 @@
   window.Webflow.push(() => {
     const time = getTime();
     console.log("// \u{1F30E} -- " + time + " //");
-    siteFrame();
+    frame();
     colorMode();
+    cursor();
+    nav();
     const windowLocation = window.location.pathname;
     if (windowLocation === "/") {
       home();

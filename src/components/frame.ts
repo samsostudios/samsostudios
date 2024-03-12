@@ -1,6 +1,6 @@
 import { gsap } from 'gsap';
 
-export const siteFrame = () => {
+export const frame = () => {
   const siteFrame = document.querySelector('.frame_fill') as HTMLElement;
   const frameBorder = document.querySelector('.frame_stroke') as HTMLElement;
 
@@ -27,7 +27,7 @@ export const siteFrame = () => {
       height: `${frameMaxHeight - frameTarget}px`,
     });
 
-    guides(frameTarget);
+    // guides(frameTarget);
   }
 
   function guides(calc: number) {

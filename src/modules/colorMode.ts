@@ -60,6 +60,7 @@ export const colorMode = () => {
     const buttonElements = [...document.querySelectorAll('a')];
     const glyphElements = [...document.querySelectorAll('.ss-glyph_path')];
     const logoElements = [...document.querySelectorAll('.mode_logo')];
+    const cursorElement = document.querySelector('.cursor_component') as HTMLElement;
 
     gsap.to(body, {
       backgroundColor: colorSetup['primary'],
@@ -123,9 +124,17 @@ export const colorMode = () => {
 
     if (logoElements.length > 0) {
       for (const i in logoElements) {
-        const temp = logoElements[i].children[1] as HTMLElement;
-        gsap.to(temp, { fill: colorSetup['accent'] });
+        const logoFill = logoElements[i].querySelector('.is-fill');
+        const logoOutline = logoElements[i].querySelector('.is-outline');
+        const logoLetters = [...logoElements[i].querySelectorAll('.is-letter')];
+        gsap.to(logoFill, { fill: colorSetup['accent'] });
+        gsap.to(logoLetters, { fill: colorSetup['invert-p'] });
       }
+    }
+
+    if (cursorElement !== undefined) {
+      gsap.to(cursorElement.children[0], { borderColor: colorSetup['invert-p'] });
+      gsap.to(cursorElement.children[1], { backgroundColor: colorSetup['invert-p'] });
     }
   }
 };
