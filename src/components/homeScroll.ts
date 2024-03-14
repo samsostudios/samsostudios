@@ -10,7 +10,7 @@ export const homeScroll = () => {
 
   function init() {
     const viewTypes = ['slide', 'grid'];
-    const defaultView = viewTypes[1];
+    const defaultView = viewTypes[0];
 
     if (defaultView === 'slide') {
       slideScroll();
@@ -49,13 +49,18 @@ export const slideScroll = () => {
     const slideItems = [...document.querySelectorAll('.home-slide_item')];
     const slideGap = 16;
     const slideActiveRatio = 0.7;
+    const slideScale = slideGap * 6;
 
     const slideHeight =
       nav.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom - slideGap * 2;
     const slideActiveWidth = slideList.clientWidth * slideActiveRatio - slideGap / 2;
     const slideNextWidth = slideList.clientWidth * (1 - slideActiveRatio) - slideGap / 2;
 
+    console.log(nav.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom);
+
     gsap.set(slideWrapper, { height: slideHeight });
+    gsap.set(slideList, { height: slideHeight - slideScale });
+    gsap.set(slideItems, { height: '100%' });
 
     slideItems.forEach((e, i) => {
       const isFirst = i === 0;

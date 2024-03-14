@@ -6666,7 +6666,7 @@
     handleSwitch();
     function init4() {
       const viewTypes = ["slide", "grid"];
-      const defaultView = viewTypes[1];
+      const defaultView = viewTypes[0];
       if (defaultView === "slide") {
         slideScroll();
       } else {
@@ -6699,10 +6699,14 @@
       const slideItems = [...document.querySelectorAll(".home-slide_item")];
       const slideGap = 16;
       const slideActiveRatio = 0.7;
+      const slideScale = slideGap * 6;
       const slideHeight = nav3.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom - slideGap * 2;
       const slideActiveWidth = slideList.clientWidth * slideActiveRatio - slideGap / 2;
       const slideNextWidth = slideList.clientWidth * (1 - slideActiveRatio) - slideGap / 2;
+      console.log(nav3.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom);
       gsapWithCSS.set(slideWrapper, { height: slideHeight });
+      gsapWithCSS.set(slideList, { height: slideHeight - slideScale });
+      gsapWithCSS.set(slideItems, { height: "100%" });
       slideItems.forEach((e, i) => {
         const isFirst = i === 0;
         gsapWithCSS.set(e, { position: "absolute" });
