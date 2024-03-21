@@ -1,7 +1,8 @@
 import { gsap } from 'gsap';
+import { Observer } from 'gsap/Observer';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, Observer);
 
 export const homeScroll = () => {
   const viewSwitch = document.querySelector('.info-module_component') as HTMLElement;
@@ -34,50 +35,149 @@ export const homeScroll = () => {
 };
 
 export const slideScroll = () => {
+  const nav = document.querySelector('.nav_component') as HTMLElement;
+  const slideHeader = document.querySelector('.home-header_component') as HTMLElement;
+  const slideWrapper = document.querySelector('.home-slide_component');
+  const slideList = document.querySelector('.home-slide_list') as HTMLElement;
+  const slideItems = [...document.querySelectorAll('.home-slide_item')];
+  const slideScale = parseFloat(slideList.dataset.listScale as string);
+
+  let currentIndex = 0;
+  const maxIndex = slideItems.length - 1;
+  let allowScroll = true;
+  const scrollTimeout = gsap
+    .delayedCall(1, () => {
+      console.log('timeout done');
+      allowScroll = true;
+    })
+    .pause();
+
+  const sliderProps = {
+    activeWidth: 0,
+    inactiveWidth: 0,
+    height: 0,
+    scale: slideScale,
+    duration: 1,
+    ease: 'power4.inOut',
+  };
+
+  updateSliderProps();
   init();
-  slideScroller();
+  slideController();
 
   window.addEventListener('resize', () => {
-    init();
+    updateSliderProps();
+    // init();
   });
 
   function init() {
-    const nav = document.querySelector('.nav_component') as HTMLElement;
-    const slideHeader = document.querySelector('.home-header_component') as HTMLElement;
-    const slideWrapper = document.querySelector('.home-slide_component');
-    const slideList = document.querySelector('.home-slide_list') as HTMLElement;
-    const slideItems = [...document.querySelectorAll('.home-slide_item')];
+    gsap.set(slideWrapper, { height: sliderProps['height'] });
+    gsap.set(slideList, { height: sliderProps['height'] * slideScale });
+    gsap.set(slideItems, { height: '100%' });
+    slideItems.forEach((e, i) => {
+      const isFirst = i === 0;
+      const isSecond = i === 1;
+      // console.log('here', i, isFirst, isSecond);
+      gsap.set(e, { position: 'absolute' });
+      if (isFirst) {
+        gsap.set(e, { width: sliderProps['activeWidth'], zIndex: 1 });
+      } else if (isSecond) {
+        gsap.set(e, { width: sliderProps['inactiveWidth'], right: 0, zIndex: 0 });
+      } else {
+        gsap.set(e, { width: 0, right: 0, opacity: 0, zIndex: -1 });
+      }
+    });
+  }
+
+  function updateSliderProps() {
     const slideGap = 16;
     const slideActiveRatio = 0.7;
-    const slideScale = slideGap * 6;
 
     const slideHeight =
       nav.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom - slideGap * 2;
     const slideActiveWidth = slideList.clientWidth * slideActiveRatio - slideGap / 2;
     const slideNextWidth = slideList.clientWidth * (1 - slideActiveRatio) - slideGap / 2;
 
-    console.log(nav.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom);
+    sliderProps['activeWidth'] = slideActiveWidth;
+    sliderProps['inactiveWidth'] = slideNextWidth;
+    sliderProps['height'] = slideHeight;
+  }
 
-    gsap.set(slideWrapper, { height: slideHeight });
-    gsap.set(slideList, { height: slideHeight - slideScale });
-    gsap.set(slideItems, { height: '100%' });
-
-    slideItems.forEach((e, i) => {
-      const isFirst = i === 0;
-
-      gsap.set(e, { position: 'absolute' });
-
-      if (isFirst) {
-        gsap.set(e, { width: slideActiveWidth });
-      }
-      if (!isFirst) {
-        gsap.set(e, { width: slideNextWidth, right: 0 });
-      }
+  function slideController() {
+    Observer.create({
+      target: window,
+      type: 'wheel,touch',
+      // onUp: () => allowScroll && regressScroll(),
+      // onDown: () => allowScroll && advanceScroll(),
+      onWheel: (e) => {
+        // console.log('wheel', e.deltaY);
+        if (allowScroll && e.deltaY > 20) {
+          advanceScroll();
+        } else if (allowScroll && e.deltaY < -20) {
+          regressScroll();
+        }
+      },
     });
   }
 
-  function slideScroller() {
-    // let stObserver =
+  function advanceScroll() {
+    console.log('advance', currentIndex);
+    allowScroll = false; // disable scroll observer
+
+    const trackIndex = { cur: currentIndex, next: currentIndex + 1, preload: currentIndex + 2 };
+    if (trackIndex['preload'] > maxIndex) {
+      trackIndex['preload'] = 0;
+    }
+    console.log('TRACKED', trackIndex, maxIndex);
+
+    const cur = slideItems[trackIndex['cur']];
+    const next = slideItems[trackIndex['next']];
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        scrollTimeout.restart(true); // reset scroll observer
+      },
+    });
+
+    if (currentIndex === maxIndex) {
+      console.log('at end');
+      currentIndex = 0;
+    } else {
+      // tl.to(slideItems[currentIndex], { width: '0%' });
+      // tl.to(
+      //   slideItems[currentIndex + 1],
+      //   {
+      //     width: '100%',
+      //   },
+      //   '<'
+      // );
+      // tl.set(slideItems[currentIndex], { opacity: 0, zIndex: -1, right: 0 });
+      // tl.set(slideItems[currentIndex + 1], { right: 'auto', zIndex: 1 });
+      // tl.set(slideItems[currentIndex + 2], { opacity: 1, zIndex: 0 });
+      // tl.to(slideItems[currentIndex + 1], { width: sliderProps['activeWidth'] }, '<');
+      // tl.to(slideItems[currentIndex + 2], { width: sliderProps['inactiveWidth'] }, '<');
+      currentIndex += 1;
+    }
+  }
+
+  function regressScroll() {
+    console.log('regress', currentIndex);
+    allowScroll = false; // disable scroll observer
+
+    // console.log(slideItems[currentIndex]);
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        scrollTimeout.restart(true); // reset scroll observer
+      },
+    });
+
+    if (currentIndex === 0) {
+      console.log('at begining');
+      currentIndex = maxIndex;
+    } else {
+      currentIndex -= 1;
+    }
   }
 };
 

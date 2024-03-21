@@ -6659,7 +6659,7 @@
   _getGSAP3() && gsap3.registerPlugin(ScrollTrigger2);
 
   // src/components/homeScroll.ts
-  gsapWithCSS.registerPlugin(ScrollTrigger2);
+  gsapWithCSS.registerPlugin(ScrollTrigger2, Observer);
   var homeScroll = () => {
     const viewSwitch = document.querySelector(".info-module_component");
     init4();
@@ -6686,39 +6686,111 @@
     }
   };
   var slideScroll = () => {
+    const nav3 = document.querySelector(".nav_component");
+    const slideHeader = document.querySelector(".home-header_component");
+    const slideWrapper = document.querySelector(".home-slide_component");
+    const slideList = document.querySelector(".home-slide_list");
+    const slideItems = [...document.querySelectorAll(".home-slide_item")];
+    const slideScale = parseFloat(slideList.dataset.listScale);
+    let currentIndex = 0;
+    const maxIndex = slideItems.length - 1;
+    let allowScroll = true;
+    const scrollTimeout = gsapWithCSS.delayedCall(1, () => {
+      console.log("timeout done");
+      allowScroll = true;
+    }).pause();
+    const sliderProps = {
+      activeWidth: 0,
+      inactiveWidth: 0,
+      height: 0,
+      scale: slideScale,
+      duration: 1,
+      ease: "power4.inOut"
+    };
+    updateSliderProps();
     init4();
-    slideScroller();
+    slideController();
     window.addEventListener("resize", () => {
-      init4();
+      updateSliderProps();
     });
     function init4() {
-      const nav3 = document.querySelector(".nav_component");
-      const slideHeader = document.querySelector(".home-header_component");
-      const slideWrapper = document.querySelector(".home-slide_component");
-      const slideList = document.querySelector(".home-slide_list");
-      const slideItems = [...document.querySelectorAll(".home-slide_item")];
-      const slideGap = 16;
-      const slideActiveRatio = 0.7;
-      const slideScale = slideGap * 6;
-      const slideHeight = nav3.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom - slideGap * 2;
-      const slideActiveWidth = slideList.clientWidth * slideActiveRatio - slideGap / 2;
-      const slideNextWidth = slideList.clientWidth * (1 - slideActiveRatio) - slideGap / 2;
-      console.log(nav3.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom);
-      gsapWithCSS.set(slideWrapper, { height: slideHeight });
-      gsapWithCSS.set(slideList, { height: slideHeight - slideScale });
+      gsapWithCSS.set(slideWrapper, { height: sliderProps["height"] });
+      gsapWithCSS.set(slideList, { height: sliderProps["height"] * slideScale });
       gsapWithCSS.set(slideItems, { height: "100%" });
       slideItems.forEach((e, i) => {
         const isFirst = i === 0;
+        const isSecond = i === 1;
         gsapWithCSS.set(e, { position: "absolute" });
         if (isFirst) {
-          gsapWithCSS.set(e, { width: slideActiveWidth });
-        }
-        if (!isFirst) {
-          gsapWithCSS.set(e, { width: slideNextWidth, right: 0 });
+          gsapWithCSS.set(e, { width: sliderProps["activeWidth"], zIndex: 1 });
+        } else if (isSecond) {
+          gsapWithCSS.set(e, { width: sliderProps["inactiveWidth"], right: 0, zIndex: 0 });
+        } else {
+          gsapWithCSS.set(e, { width: 0, right: 0, opacity: 0, zIndex: -1 });
         }
       });
     }
-    function slideScroller() {
+    function updateSliderProps() {
+      const slideGap = 16;
+      const slideActiveRatio = 0.7;
+      const slideHeight = nav3.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom - slideGap * 2;
+      const slideActiveWidth = slideList.clientWidth * slideActiveRatio - slideGap / 2;
+      const slideNextWidth = slideList.clientWidth * (1 - slideActiveRatio) - slideGap / 2;
+      sliderProps["activeWidth"] = slideActiveWidth;
+      sliderProps["inactiveWidth"] = slideNextWidth;
+      sliderProps["height"] = slideHeight;
+    }
+    function slideController() {
+      Observer.create({
+        target: window,
+        type: "wheel,touch",
+        // onUp: () => allowScroll && regressScroll(),
+        // onDown: () => allowScroll && advanceScroll(),
+        onWheel: (e) => {
+          if (allowScroll && e.deltaY > 20) {
+            advanceScroll();
+          } else if (allowScroll && e.deltaY < -20) {
+            regressScroll();
+          }
+        }
+      });
+    }
+    function advanceScroll() {
+      console.log("advance", currentIndex);
+      allowScroll = false;
+      const trackIndex = { cur: currentIndex, next: currentIndex + 1, preload: currentIndex + 2 };
+      if (trackIndex["preload"] > maxIndex) {
+        trackIndex["preload"] = 0;
+      }
+      console.log("TRACKED", trackIndex, maxIndex);
+      const cur = slideItems[trackIndex["cur"]];
+      const next = slideItems[trackIndex["next"]];
+      const tl = gsapWithCSS.timeline({
+        onComplete: () => {
+          scrollTimeout.restart(true);
+        }
+      });
+      if (currentIndex === maxIndex) {
+        console.log("at end");
+        currentIndex = 0;
+      } else {
+        currentIndex += 1;
+      }
+    }
+    function regressScroll() {
+      console.log("regress", currentIndex);
+      allowScroll = false;
+      const tl = gsapWithCSS.timeline({
+        onComplete: () => {
+          scrollTimeout.restart(true);
+        }
+      });
+      if (currentIndex === 0) {
+        console.log("at begining");
+        currentIndex = maxIndex;
+      } else {
+        currentIndex -= 1;
+      }
     }
   };
   var gridScroll = () => {
