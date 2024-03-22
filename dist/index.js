@@ -6692,6 +6692,7 @@
     const slideList = document.querySelector(".home-slide_list");
     const slideItems = [...document.querySelectorAll(".home-slide_item")];
     const slideScale = parseFloat(slideList.dataset.listScale);
+    console.log("ITEMS", slideItems);
     let currentIndex = 0;
     const maxIndex = slideItems.length - 1;
     let allowScroll = true;
@@ -6761,15 +6762,27 @@
       const trackIndex = { cur: currentIndex, next: currentIndex + 1, preload: currentIndex + 2 };
       if (trackIndex["preload"] > maxIndex) {
         trackIndex["preload"] = 0;
+      } else if (trackIndex["next"] > maxIndex) {
+        console.log("YOOOOOOOOOOOOOOOOOOOOO");
+        trackIndex["next"] = 0;
       }
       console.log("TRACKED", trackIndex, maxIndex);
-      const cur = slideItems[trackIndex["cur"]];
+      const current = slideItems[trackIndex["cur"]];
       const next = slideItems[trackIndex["next"]];
+      const preload = slideItems[trackIndex["preload"]];
+      console.log(current, next, preload);
       const tl = gsapWithCSS.timeline({
         onComplete: () => {
           scrollTimeout.restart(true);
         }
       });
+      tl.to(current, { width: "0%" });
+      tl.to(next, { width: "100%" }, "<");
+      tl.set(current, { opacity: 0, zIndex: -1, right: 0 });
+      tl.set(next, { right: "auto", zIndex: 1 });
+      tl.set(preload, { opacity: 1, zIndex: 0 });
+      tl.to(next, { width: sliderProps["activeWidth"] }, "<");
+      tl.to(preload, { width: sliderProps["inactiveWidth"] }, "<");
       if (currentIndex === maxIndex) {
         console.log("at end");
         currentIndex = 0;
@@ -6778,19 +6791,6 @@
       }
     }
     function regressScroll() {
-      console.log("regress", currentIndex);
-      allowScroll = false;
-      const tl = gsapWithCSS.timeline({
-        onComplete: () => {
-          scrollTimeout.restart(true);
-        }
-      });
-      if (currentIndex === 0) {
-        console.log("at begining");
-        currentIndex = maxIndex;
-      } else {
-        currentIndex -= 1;
-      }
     }
   };
   var gridScroll = () => {
