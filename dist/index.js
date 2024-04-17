@@ -4352,20 +4352,16 @@
     function setColor() {
       const body = document.querySelector("body");
       const navHover = document.querySelector(".nav_hover");
-      const modePrimary = [...document.querySelectorAll(".mode_primary")];
-      const modeSecondary = [...document.querySelectorAll(".mode_secondary")];
-      const modePrimaryInvert = [...document.querySelectorAll(".mode_primary-invert")];
-      const modeSecondaryInvert = [...document.querySelectorAll(".mode_secondary-invert")];
-      const modeAccent = [...document.querySelectorAll(".mode_accent")];
-      const modeGlass = [...document.querySelectorAll(".mode_glass-effect")];
-      const modeBorder = [...document.querySelectorAll(".mode_border")];
-      console.log("COLOR", colorSetup);
-      console.log(modePrimary);
       gsapWithCSS.to(body, {
         backgroundColor: colorSetup["primary"],
         color: colorSetup["invert-p"]
       });
       gsapWithCSS.to(navHover, { borderColor: colorSetup["invert-p"] });
+      const modePrimary = [...document.querySelectorAll(".mode_primary")];
+      const modeSecondary = [...document.querySelectorAll(".mode_secondary")];
+      const modePrimaryInvert = [...document.querySelectorAll(".mode_primary-invert")];
+      const modeSecondaryInvert = [...document.querySelectorAll(".mode_secondary-invert")];
+      const modeAccent = [...document.querySelectorAll(".mode_accent")];
       if (modePrimary.length !== 0) {
         gsapWithCSS.to(modePrimary, { backgroundColor: colorSetup["primary"] });
       }
@@ -4380,12 +4376,6 @@
       }
       if (modeAccent.length !== 0) {
         gsapWithCSS.to(modeAccent, { backgroundColor: colorSetup["accent"] });
-      }
-      if (modeGlass.length !== 0) {
-        gsapWithCSS.to(modeGlass, { backgroundColor: colorSetup["glass"] });
-      }
-      if (modeBorder.length !== 0) {
-        gsapWithCSS.to(modeBorder, { borderColor: colorSetup["invert-p"] });
       }
     }
   };
@@ -6739,13 +6729,6 @@
           scrollTimeout.restart(true);
         }
       });
-      tl.to(current, { width: "0%" });
-      tl.to(next, { width: "100%" }, "<");
-      tl.set(current, { opacity: 0, zIndex: -1, right: 0 });
-      tl.set(next, { right: "auto", zIndex: 1 });
-      tl.set(preload, { opacity: 1, zIndex: 0 });
-      tl.to(next, { width: sliderProps["activeWidth"] }, "<");
-      tl.to(preload, { width: sliderProps["inactiveWidth"] }, "<");
       if (currentIndex === maxIndex) {
         console.log("at end");
         currentIndex = 0;

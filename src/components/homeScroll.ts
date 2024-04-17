@@ -147,13 +147,13 @@ export const slideScroll = () => {
       },
     });
 
-    tl.to(current, { width: '0%' });
-    tl.to(next, { width: '100%' }, '<');
-    tl.set(current, { opacity: 0, zIndex: -1, right: 0 });
-    tl.set(next, { right: 'auto', zIndex: 1 });
-    tl.set(preload, { opacity: 1, zIndex: 0 });
-    tl.to(next, { width: sliderProps['activeWidth'] }, '<');
-    tl.to(preload, { width: sliderProps['inactiveWidth'] }, '<');
+    // tl.to(current, { width: '0%' });
+    // tl.to(next, { width: '100%' }, '<');
+    // tl.set(current, { opacity: 0, zIndex: -1, right: 0 });
+    // tl.set(next, { right: 'auto', zIndex: 1 });
+    // tl.set(preload, { opacity: 1, zIndex: 0 });
+    // tl.to(next, { width: sliderProps['activeWidth'] }, '<');
+    // tl.to(preload, { width: sliderProps['inactiveWidth'] }, '<');
 
     if (currentIndex === maxIndex) {
       console.log('at end');

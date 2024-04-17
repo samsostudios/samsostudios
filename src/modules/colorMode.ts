@@ -51,16 +51,16 @@ export const colorMode = () => {
   }
 
   function setColor() {
-    const body = document.querySelector('body');
-    const navHover = document.querySelector('.nav_hover');
+    // Global
 
-    const modePrimary = [...document.querySelectorAll('.mode_primary')];
-    const modeSecondary = [...document.querySelectorAll('.mode_secondary')];
-    const modePrimaryInvert = [...document.querySelectorAll('.mode_primary-invert')];
-    const modeSecondaryInvert = [...document.querySelectorAll('.mode_secondary-invert')];
-    const modeAccent = [...document.querySelectorAll('.mode_accent')];
-    const modeGlass = [...document.querySelectorAll('.mode_glass-effect')];
-    const modeBorder = [...document.querySelectorAll('.mode_border')];
+    // Colors
+
+    // Typography
+
+    //UI Elements
+
+    // const modeGlass = [...document.querySelectorAll('.mode_glass')];
+    // const modeBorder = [...document.querySelectorAll('.mode_border')];
     // const secondaryElements = [...document.querySelectorAll('.mode_secondary')];
     // const accentElements = [...document.querySelectorAll('.mode_accent')];
 
@@ -74,43 +74,50 @@ export const colorMode = () => {
     // const logoElements = [...document.querySelectorAll('.mode_logo')];
     // const cursorElement = document.querySelector('.cursor_component') as HTMLElement;
 
-    console.log('COLOR', colorSetup);
-    console.log(modePrimary);
+    // Global
+    const body = document.querySelector('body');
+    const navHover = document.querySelector('.nav_hover');
 
     gsap.to(body, {
       backgroundColor: colorSetup['primary'],
       color: colorSetup['invert-p'],
     });
-
     gsap.to(navHover, { borderColor: colorSetup['invert-p'] });
+
+    // Colors
+    const modePrimary = [...document.querySelectorAll('.mode_primary')];
+    const modeSecondary = [...document.querySelectorAll('.mode_secondary')];
+    const modePrimaryInvert = [...document.querySelectorAll('.mode_primary-invert')];
+    const modeSecondaryInvert = [...document.querySelectorAll('.mode_secondary-invert')];
+    const modeAccent = [...document.querySelectorAll('.mode_accent')];
 
     if (modePrimary.length !== 0) {
       gsap.to(modePrimary, { backgroundColor: colorSetup['primary'] });
     }
-
     if (modeSecondary.length !== 0) {
       gsap.to(modeSecondary, { backgroundColor: colorSetup['secondary'] });
     }
-
     if (modePrimaryInvert.length !== 0) {
       gsap.to(modePrimaryInvert, { backgroundColor: colorSetup['invert-p'] });
     }
-
     if (modeSecondaryInvert.length !== 0) {
       gsap.to(modeSecondaryInvert, { backgroundColor: colorSetup['invert-s'] });
     }
-
     if (modeAccent.length !== 0) {
       gsap.to(modeAccent, { backgroundColor: colorSetup['accent'] });
     }
 
-    if (modeGlass.length !== 0) {
-      gsap.to(modeGlass, { backgroundColor: colorSetup['glass'] });
-    }
+    // Typography
 
-    if (modeBorder.length !== 0) {
-      gsap.to(modeBorder, { borderColor: colorSetup['invert-p'] });
-    }
+    // UI ELements
+
+    // if (modeGlass.length !== 0) {
+    //   gsap.to(modeGlass, { backgroundColor: colorSetup['glass'] });
+    // }
+
+    // if (modeBorder.length !== 0) {
+    //   gsap.to(modeBorder, { borderColor: colorSetup['invert-p'] });
+    // }
 
     // if (secondaryElements.length > 0) {
     //   gsap.to(secondaryElements, { backgroundColor: colorSetup['secondary'] });
