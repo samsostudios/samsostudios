@@ -53,88 +53,134 @@ export const colorMode = () => {
   function setColor() {
     const body = document.querySelector('body');
     const navHover = document.querySelector('.nav_hover');
-    const secondaryElements = [...document.querySelectorAll('.mode_secondary')];
-    const accentElements = [...document.querySelectorAll('.mode_accent')];
-    const glassElements = [...document.querySelectorAll('.mode_glass-effect')];
-    const borderElements = [...document.querySelectorAll('.mode_border')];
-    const buttonElements = [...document.querySelectorAll('a')];
-    const glyphElements = [...document.querySelectorAll('.ss-glyph_path')];
-    const logoElements = [...document.querySelectorAll('.mode_logo')];
-    const cursorElement = document.querySelector('.cursor_component') as HTMLElement;
+
+    const modePrimary = [...document.querySelectorAll('.mode_primary')];
+    const modeSecondary = [...document.querySelectorAll('.mode_secondary')];
+    const modePrimaryInvert = [...document.querySelectorAll('.mode_primary-invert')];
+    const modeSecondaryInvert = [...document.querySelectorAll('.mode_secondary-invert')];
+    const modeAccent = [...document.querySelectorAll('.mode_accent')];
+    const modeGlass = [...document.querySelectorAll('.mode_glass-effect')];
+    const modeBorder = [...document.querySelectorAll('.mode_border')];
+    // const secondaryElements = [...document.querySelectorAll('.mode_secondary')];
+    // const accentElements = [...document.querySelectorAll('.mode_accent')];
+
+    // const bgInvertElements = [...document.querySelectorAll('.mode_bg-invert')];
+    // const textInvertElements = [...document.querySelectorAll('.mode_text-invert')];
+
+    // const glassElements = [...document.querySelectorAll('.mode_glass-effect')];
+    // const borderElements = [...document.querySelectorAll('.mode_border')];
+    // const buttonElements = [...document.querySelectorAll('a')];
+    // const glyphElements = [...document.querySelectorAll('.ss-glyph_path')];
+    // const logoElements = [...document.querySelectorAll('.mode_logo')];
+    // const cursorElement = document.querySelector('.cursor_component') as HTMLElement;
+
+    console.log('COLOR', colorSetup);
+    console.log(modePrimary);
 
     gsap.to(body, {
       backgroundColor: colorSetup['primary'],
       color: colorSetup['invert-p'],
-      ease: 'power4.out',
     });
 
-    gsap.to(navHover, { borderColor: colorSetup['invert-p'], ease: 'power4.out' });
+    gsap.to(navHover, { borderColor: colorSetup['invert-p'] });
 
-    if (secondaryElements.length > 0) {
-      gsap.to(secondaryElements, { backgroundColor: colorSetup['secondary'], ease: 'power4.out' });
+    if (modePrimary.length !== 0) {
+      gsap.to(modePrimary, { backgroundColor: colorSetup['primary'] });
     }
 
-    if (accentElements.length > 0) {
-      gsap.to(accentElements, { backgroundColor: colorSetup['accent'], ease: 'power4.out' });
+    if (modeSecondary.length !== 0) {
+      gsap.to(modeSecondary, { backgroundColor: colorSetup['secondary'] });
     }
 
-    if (glassElements.length > 0) {
-      gsap.to(glassElements, {
-        backgroundColor: colorSetup['glass'],
-        ease: 'power4.out',
-      });
+    if (modePrimaryInvert.length !== 0) {
+      gsap.to(modePrimaryInvert, { backgroundColor: colorSetup['invert-p'] });
     }
 
-    if (borderElements.length > 0) {
-      gsap.to(borderElements, {
-        borderColor: colorSetup['invert-p'],
-        ease: 'power4.out',
-      });
+    if (modeSecondaryInvert.length !== 0) {
+      gsap.to(modeSecondaryInvert, { backgroundColor: colorSetup['invert-s'] });
     }
 
-    if (buttonElements.length > 0) {
-      gsap.to(buttonElements, {
-        color: colorSetup['invert-p'],
-        ease: 'power4.out',
-      });
-
-      for (const i in buttonElements) {
-        if (buttonElements[i].classList.contains('nav_link')) {
-          if (buttonElements[i].classList.contains('w--current')) {
-            gsap.to(buttonElements[i], {
-              backgroundColor: colorSetup['primary'],
-              borderColor: colorSetup['invert-p'],
-              ease: 'power4.out',
-            });
-          } else {
-          }
-        } else if (buttonElements[i].classList.contains('button')) {
-          gsap.to(buttonElements[i], {
-            backgroundColor: colorSetup['glass'],
-            borderColor: colorSetup['invert-p'],
-            ease: 'power4.out',
-          });
-        }
-      }
+    if (modeAccent.length !== 0) {
+      gsap.to(modeAccent, { backgroundColor: colorSetup['accent'] });
     }
 
-    if (glyphElements.length > 0) {
-      gsap.to(glyphElements, { fill: colorSetup['invert-p'], ease: 'power4.out' });
+    if (modeGlass.length !== 0) {
+      gsap.to(modeGlass, { backgroundColor: colorSetup['glass'] });
     }
 
-    if (logoElements.length > 0) {
-      for (const i in logoElements) {
-        const logoFill = logoElements[i].querySelector('.is-fill');
-        const logoOutline = logoElements[i].querySelector('.is-outline');
-        const logoLetters = [...logoElements[i].querySelectorAll('.is-letter')];
-        gsap.to(logoFill, { fill: colorSetup['accent'] });
-        gsap.to(logoLetters, { fill: colorSetup['invert-p'] });
-      }
+    if (modeBorder.length !== 0) {
+      gsap.to(modeBorder, { borderColor: colorSetup['invert-p'] });
     }
 
-    if (cursorElement !== undefined) {
-      gsap.to(cursorElement.children[0], { borderColor: colorSetup['invert-p'] });
-      gsap.to(cursorElement.children[1], { backgroundColor: colorSetup['invert-p'] });
-    }
+    // if (secondaryElements.length > 0) {
+    //   gsap.to(secondaryElements, { backgroundColor: colorSetup['secondary'] });
+    // }
+
+    // if (accentElements.length > 0) {
+    //   gsap.to(accentElements, { backgroundColor: colorSetup['accent'] });
+    // }
+
+    // if (bgInvertElements.length > 0) {
+    //   gsap.to(bgInvertElements, { backgroundColor: colorSetup['invert-p'] });
+    // }
+
+    // if (textInvertElements.length > 0) {
+    //   console.log(colorSetup['primary']);
+    //   gsap.to(textInvertElements, { color: colorSetup['primary'] });
+    // }
+
+    // if (glassElements.length > 0) {
+    //   gsap.to(glassElements, {
+    //     backgroundColor: colorSetup['glass'],
+    //   });
+    // }
+
+    // if (borderElements.length > 0) {
+    //   gsap.to(borderElements, {
+    //     borderColor: colorSetup['invert-p'],
+    //   });
+    // }
+
+    // if (buttonElements.length > 0) {
+    //   gsap.to(buttonElements, {
+    //     color: colorSetup['invert-p'],
+    //   });
+
+    //   for (const i in buttonElements) {
+    //     if (buttonElements[i].classList.contains('nav_link')) {
+    //       if (buttonElements[i].classList.contains('w--current')) {
+    //         gsap.to(buttonElements[i], {
+    //           backgroundColor: colorSetup['primary'],
+    //           borderColor: colorSetup['invert-p'],
+    //         });
+    //       } else {
+    //       }
+    //     } else if (buttonElements[i].classList.contains('button')) {
+    //       gsap.to(buttonElements[i], {
+    //         backgroundColor: colorSetup['glass'],
+    //         borderColor: colorSetup['invert-p'],
+    //       });
+    //     }
+    //   }
+    // }
+
+    // if (glyphElements.length > 0) {
+    //   gsap.to(glyphElements, { fill: colorSetup['invert-p'], ease: 'power4.out' });
+    // }
+
+    // if (logoElements.length > 0) {
+    //   for (const i in logoElements) {
+    //     const logoFill = logoElements[i].querySelector('.is-fill');
+    //     const logoOutline = logoElements[i].querySelector('.is-outline');
+    //     const logoLetters = [...logoElements[i].querySelectorAll('.is-letter')];
+    //     gsap.to(logoFill, { fill: colorSetup['accent'] });
+    //     gsap.to(logoLetters, { fill: colorSetup['invert-p'] });
+    //   }
+    // }
+
+    // if (cursorElement !== undefined) {
+    //   gsap.to(cursorElement.children[0], { borderColor: colorSetup['invert-p'] });
+    //   gsap.to(cursorElement.children[1], { backgroundColor: colorSetup['invert-p'] });
+    // }
   }
 };

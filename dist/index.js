@@ -4352,77 +4352,40 @@
     function setColor() {
       const body = document.querySelector("body");
       const navHover = document.querySelector(".nav_hover");
-      const secondaryElements = [...document.querySelectorAll(".mode_secondary")];
-      const accentElements = [...document.querySelectorAll(".mode_accent")];
-      const glassElements = [...document.querySelectorAll(".mode_glass-effect")];
-      const borderElements = [...document.querySelectorAll(".mode_border")];
-      const buttonElements = [...document.querySelectorAll("a")];
-      const glyphElements = [...document.querySelectorAll(".ss-glyph_path")];
-      const logoElements = [...document.querySelectorAll(".mode_logo")];
-      const cursorElement = document.querySelector(".cursor_component");
+      const modePrimary = [...document.querySelectorAll(".mode_primary")];
+      const modeSecondary = [...document.querySelectorAll(".mode_secondary")];
+      const modePrimaryInvert = [...document.querySelectorAll(".mode_primary-invert")];
+      const modeSecondaryInvert = [...document.querySelectorAll(".mode_secondary-invert")];
+      const modeAccent = [...document.querySelectorAll(".mode_accent")];
+      const modeGlass = [...document.querySelectorAll(".mode_glass-effect")];
+      const modeBorder = [...document.querySelectorAll(".mode_border")];
+      console.log("COLOR", colorSetup);
+      console.log(modePrimary);
       gsapWithCSS.to(body, {
         backgroundColor: colorSetup["primary"],
-        color: colorSetup["invert-p"],
-        ease: "power4.out"
+        color: colorSetup["invert-p"]
       });
-      gsapWithCSS.to(navHover, { borderColor: colorSetup["invert-p"], ease: "power4.out" });
-      if (secondaryElements.length > 0) {
-        gsapWithCSS.to(secondaryElements, { backgroundColor: colorSetup["secondary"], ease: "power4.out" });
+      gsapWithCSS.to(navHover, { borderColor: colorSetup["invert-p"] });
+      if (modePrimary.length !== 0) {
+        gsapWithCSS.to(modePrimary, { backgroundColor: colorSetup["primary"] });
       }
-      if (accentElements.length > 0) {
-        gsapWithCSS.to(accentElements, { backgroundColor: colorSetup["accent"], ease: "power4.out" });
+      if (modeSecondary.length !== 0) {
+        gsapWithCSS.to(modeSecondary, { backgroundColor: colorSetup["secondary"] });
       }
-      if (glassElements.length > 0) {
-        gsapWithCSS.to(glassElements, {
-          backgroundColor: colorSetup["glass"],
-          ease: "power4.out"
-        });
+      if (modePrimaryInvert.length !== 0) {
+        gsapWithCSS.to(modePrimaryInvert, { backgroundColor: colorSetup["invert-p"] });
       }
-      if (borderElements.length > 0) {
-        gsapWithCSS.to(borderElements, {
-          borderColor: colorSetup["invert-p"],
-          ease: "power4.out"
-        });
+      if (modeSecondaryInvert.length !== 0) {
+        gsapWithCSS.to(modeSecondaryInvert, { backgroundColor: colorSetup["invert-s"] });
       }
-      if (buttonElements.length > 0) {
-        gsapWithCSS.to(buttonElements, {
-          color: colorSetup["invert-p"],
-          ease: "power4.out"
-        });
-        for (const i in buttonElements) {
-          if (buttonElements[i].classList.contains("nav_link")) {
-            if (buttonElements[i].classList.contains("w--current")) {
-              gsapWithCSS.to(buttonElements[i], {
-                backgroundColor: colorSetup["primary"],
-                borderColor: colorSetup["invert-p"],
-                ease: "power4.out"
-              });
-            } else {
-            }
-          } else if (buttonElements[i].classList.contains("button")) {
-            gsapWithCSS.to(buttonElements[i], {
-              backgroundColor: colorSetup["glass"],
-              borderColor: colorSetup["invert-p"],
-              ease: "power4.out"
-            });
-          }
-        }
+      if (modeAccent.length !== 0) {
+        gsapWithCSS.to(modeAccent, { backgroundColor: colorSetup["accent"] });
       }
-      if (glyphElements.length > 0) {
-        gsapWithCSS.to(glyphElements, { fill: colorSetup["invert-p"], ease: "power4.out" });
+      if (modeGlass.length !== 0) {
+        gsapWithCSS.to(modeGlass, { backgroundColor: colorSetup["glass"] });
       }
-      if (logoElements.length > 0) {
-        for (const i in logoElements) {
-          const logoFill = logoElements[i].querySelector(".is-fill");
-          const logoOutline = logoElements[i].querySelector(".is-outline");
-          const logoLetters = [...logoElements[i].querySelectorAll(".is-letter")];
-          gsapWithCSS.to(logoFill, { fill: colorSetup["accent"] });
-          gsapWithCSS.to(logoLetters, { fill: colorSetup["invert-p"] });
-        }
-      }
-      if (cursorElement !== void 0) {
-        gsapWithCSS.to(cursorElement.children[0], { borderColor: colorSetup["invert-p"] });
-        gsapWithCSS.to(cursorElement.children[1], { backgroundColor: colorSetup["invert-p"] });
+      if (modeBorder.length !== 0) {
+        gsapWithCSS.to(modeBorder, { borderColor: colorSetup["invert-p"] });
       }
     }
   };
