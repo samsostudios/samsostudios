@@ -51,16 +51,16 @@ export const colorMode = () => {
   }
 
   function setColor() {
-    // Global
+    const body = document.querySelector('body');
+    const navHover = document.querySelector('.nav_hover');
 
-    // Colors
-
-    // Typography
-
-    //UI Elements
-
-    // const modeGlass = [...document.querySelectorAll('.mode_glass')];
-    // const modeBorder = [...document.querySelectorAll('.mode_border')];
+    const modePrimary = [...document.querySelectorAll('.mode_primary')];
+    const modeSecondary = [...document.querySelectorAll('.mode_secondary')];
+    const modePrimaryInvert = [...document.querySelectorAll('.mode_primary-invert')];
+    const modeSecondaryInvert = [...document.querySelectorAll('.mode_secondary-invert')];
+    const modeAccent = [...document.querySelectorAll('.mode_accent')];
+    const modeGlass = [...document.querySelectorAll('.mode_glass-effect')];
+    const modeBorder = [...document.querySelectorAll('.mode_border')];
     // const secondaryElements = [...document.querySelectorAll('.mode_secondary')];
     // const accentElements = [...document.querySelectorAll('.mode_accent')];
 

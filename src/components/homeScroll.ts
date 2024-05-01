@@ -65,7 +65,7 @@ export const slideScroll = () => {
 
   updateSliderProps();
   init();
-  slideController();
+  // slideController();
 
   window.addEventListener('resize', () => {
     updateSliderProps();

@@ -13,20 +13,22 @@ export const nav = () => {
     const navLinks = [...nav.querySelectorAll('.nav_link')];
     const linkHoverElement = nav.querySelector('.nav_hover') as HTMLElement;
 
+    console.log('HERE', linkHoverElement);
+
     const wrapBounds = linkWrap.getBoundingClientRect();
 
     gsap.set(linkHoverElement, { opacity: 0, width: navLinks[0].clientWidth });
 
     for (const i in navLinks) {
       const setLink = navLinks[i] as HTMLElement;
-
+      console.log('set', setLink);
       setLink.addEventListener('mouseover', (e) => {
         const target = e.target as HTMLElement;
         const bounds = target.getBoundingClientRect();
         gsap.to(linkHoverElement, { opacity: 0.5 });
         gsap.to(linkHoverElement, {
           width: target.clientWidth,
-          x: bounds.left - wrapBounds.left,
+          x: bounds.left - wrapBounds.left - 16,
           ease: 'back.inOut(1.7)',
         });
       });

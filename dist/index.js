@@ -4286,17 +4286,19 @@
       const linkWrap = nav3.querySelector(".nav_main");
       const navLinks = [...nav3.querySelectorAll(".nav_link")];
       const linkHoverElement = nav3.querySelector(".nav_hover");
+      console.log("HERE", linkHoverElement);
       const wrapBounds = linkWrap.getBoundingClientRect();
       gsapWithCSS.set(linkHoverElement, { opacity: 0, width: navLinks[0].clientWidth });
       for (const i in navLinks) {
         const setLink = navLinks[i];
+        console.log("set", setLink);
         setLink.addEventListener("mouseover", (e) => {
           const target = e.target;
           const bounds = target.getBoundingClientRect();
           gsapWithCSS.to(linkHoverElement, { opacity: 0.5 });
           gsapWithCSS.to(linkHoverElement, {
             width: target.clientWidth,
-            x: bounds.left - wrapBounds.left,
+            x: bounds.left - wrapBounds.left - 16,
             ease: "back.inOut(1.7)"
           });
         });
@@ -6663,7 +6665,6 @@
     };
     updateSliderProps();
     init4();
-    slideController();
     window.addEventListener("resize", () => {
       updateSliderProps();
     });
