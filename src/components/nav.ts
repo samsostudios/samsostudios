@@ -5,15 +5,16 @@ import { gsap } from 'gsap';
 export const nav = () => {
   const nav = document.querySelector('.nav_component') as HTMLElement;
 
-  timeModule();
-  hover();
+  nav !== null &&
+    (() => {
+      timeModule();
+      hover();
+    });
 
   function hover() {
     const linkWrap = nav.querySelector('.nav_main') as HTMLElement;
     const navLinks = [...nav.querySelectorAll('.nav_link')];
     const linkHoverElement = nav.querySelector('.nav_hover') as HTMLElement;
-
-    console.log('HERE', linkHoverElement);
 
     const wrapBounds = linkWrap.getBoundingClientRect();
 

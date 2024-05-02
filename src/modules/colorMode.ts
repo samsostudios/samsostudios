@@ -82,7 +82,8 @@ export const colorMode = () => {
       backgroundColor: colorSetup['primary'],
       color: colorSetup['invert-p'],
     });
-    gsap.to(navHover, { borderColor: colorSetup['invert-p'] });
+
+    navHover !== null && gsap.to(navHover, { borderColor: colorSetup['invert-p'] });
 
     // Colors
     const modePrimary = [...document.querySelectorAll('.mode_primary')];

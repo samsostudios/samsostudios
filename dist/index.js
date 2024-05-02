@@ -4217,39 +4217,42 @@
 
   // src/components/frame.ts
   var frame = () => {
-    const siteFrame = document.querySelector(".frame_fill");
-    const frameBorder = document.querySelector(".frame_stroke");
-    setup();
-    window.addEventListener("resize", () => {
+    const siteFrame = document.querySelector(".site_frame");
+    siteFrame !== null && (() => {
+      const frameFill = siteFrame.querySelector(".frame_fill");
+      const frameBorder = siteFrame.querySelector(".frame_stroke");
       setup();
-    });
-    function setup() {
-      const scaleData = siteFrame.dataset.frameScale;
-      const frameScale = parseFloat(scaleData);
-      const frameTarget = window.innerWidth * frameScale;
-      const frameMaxWidth = window.innerWidth - frameTarget;
-      const frameMaxHeight = window.innerHeight - frameTarget;
-      const ogFrame = `polygon(0% 0%, 0% 100%, 1% 100%, 1% 1%, 99% 1%, 99% 99%, 1% 99%, 0% 100%, 100% 100%, 100% 0%)`;
-      const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${frameMaxHeight}px, ${frameTarget}px ${frameMaxHeight}px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
-      gsapWithCSS.to(siteFrame, { duration: 0, clipPath: frameClip });
-      gsapWithCSS.to(frameBorder, {
-        duration: 0,
-        width: `${frameMaxWidth - frameTarget}px`,
-        height: `${frameMaxHeight - frameTarget}px`
+      window.addEventListener("resize", () => {
+        setup();
       });
-    }
-    function guides(calc) {
-      const frameGuides = [...document.querySelectorAll(".frame_guide")];
-      for (const i in frameGuides) {
-        if (frameGuides[i].classList.contains("horizontal")) {
-          frameGuides[i].classList.contains("top") ? gsapWithCSS.set(frameGuides[i], { top: calc }) : gsapWithCSS.set(frameGuides[i], { bottom: calc });
-          gsapWithCSS.set(frameGuides[i], { width: calc });
-        } else if (frameGuides[i].classList.contains("vertical")) {
-          frameGuides[i].classList.contains("right") ? gsapWithCSS.set(frameGuides[i], { right: calc }) : gsapWithCSS.set(frameGuides[i], { left: calc });
-          gsapWithCSS.set(frameGuides[i], { height: calc });
+      function setup() {
+        const scaleData = frameFill.dataset.frameScale;
+        const frameScale = parseFloat(scaleData);
+        const frameTarget = window.innerWidth * frameScale;
+        const frameMaxWidth = window.innerWidth - frameTarget;
+        const frameMaxHeight = window.innerHeight - frameTarget;
+        const ogFrame = `polygon(0% 0%, 0% 100%, 1% 100%, 1% 1%, 99% 1%, 99% 99%, 1% 99%, 0% 100%, 100% 100%, 100% 0%)`;
+        const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${frameMaxHeight}px, ${frameTarget}px ${frameMaxHeight}px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
+        gsapWithCSS.to(frameFill, { duration: 0, clipPath: frameClip });
+        gsapWithCSS.to(frameBorder, {
+          duration: 0,
+          width: `${frameMaxWidth - frameTarget}px`,
+          height: `${frameMaxHeight - frameTarget}px`
+        });
+      }
+      function guides(calc) {
+        const frameGuides = [...document.querySelectorAll(".frame_guide")];
+        for (const i in frameGuides) {
+          if (frameGuides[i].classList.contains("horizontal")) {
+            frameGuides[i].classList.contains("top") ? gsapWithCSS.set(frameGuides[i], { top: calc }) : gsapWithCSS.set(frameGuides[i], { bottom: calc });
+            gsapWithCSS.set(frameGuides[i], { width: calc });
+          } else if (frameGuides[i].classList.contains("vertical")) {
+            frameGuides[i].classList.contains("right") ? gsapWithCSS.set(frameGuides[i], { right: calc }) : gsapWithCSS.set(frameGuides[i], { left: calc });
+            gsapWithCSS.set(frameGuides[i], { height: calc });
+          }
         }
       }
-    }
+    })();
   };
 
   // src/utils/fomattedTime.ts
@@ -4280,13 +4283,14 @@
   // src/components/nav.ts
   var nav = () => {
     const nav3 = document.querySelector(".nav_component");
-    timeModule();
-    hover();
+    nav3 !== null && (() => {
+      timeModule();
+      hover();
+    });
     function hover() {
       const linkWrap = nav3.querySelector(".nav_main");
       const navLinks = [...nav3.querySelectorAll(".nav_link")];
       const linkHoverElement = nav3.querySelector(".nav_hover");
-      console.log("HERE", linkHoverElement);
       const wrapBounds = linkWrap.getBoundingClientRect();
       gsapWithCSS.set(linkHoverElement, { opacity: 0, width: navLinks[0].clientWidth });
       for (const i in navLinks) {
@@ -4358,7 +4362,7 @@
         backgroundColor: colorSetup["primary"],
         color: colorSetup["invert-p"]
       });
-      gsapWithCSS.to(navHover, { borderColor: colorSetup["invert-p"] });
+      navHover !== null && gsapWithCSS.to(navHover, { borderColor: colorSetup["invert-p"] });
       const modePrimary = [...document.querySelectorAll(".mode_primary")];
       const modeSecondary = [...document.querySelectorAll(".mode_secondary")];
       const modePrimaryInvert = [...document.querySelectorAll(".mode_primary-invert")];
@@ -4385,24 +4389,10 @@
   // src/modules/cursor.ts
   var cursor = () => {
     const cursor2 = document.querySelector(".cursor_component");
-    const cursorSpeed = parseFloat(cursor2.dataset["cursorSpeed"]);
-    gsapWithCSS.set(cursor2, { xPercent: -50, yPercent: 0 });
-    const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    const mouse = { x: pos.x, y: pos.y };
-    const speed = 0.2;
-    const xSet = gsapWithCSS.quickSetter(cursor2, "x", "px");
-    const ySet = gsapWithCSS.quickSetter(cursor2, "y", "px");
-    window.addEventListener("mousemove", (e) => {
-      mouse.x = e.x;
-      mouse.y = e.y;
-    });
-    gsapWithCSS.ticker.add(() => {
-      const dt = 1 - Math.pow(1 - speed, gsapWithCSS.ticker.deltaRatio());
-      pos.x += (mouse.x - pos.x) * cursorSpeed * dt;
-      pos.y += (mouse.y - pos.y) * cursorSpeed * dt - 0.5;
-      xSet(pos.x);
-      ySet(pos.y);
-    });
+    console.log(cursor2);
+    cursor2 && (() => {
+      console.log("Cursor");
+    })();
   };
 
   // node_modules/gsap/Observer.js

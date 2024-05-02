@@ -26,8 +26,8 @@ export const timeModule = () => {
       .toString()
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${period}`;
 
+    // timeModule !== null && (() => {});
     timeModule.children[0].innerHTML = formattedTime;
-
     setTimeout(updateModule, 1000);
   }
 
