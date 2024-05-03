@@ -9,7 +9,7 @@ export const nav = () => {
     (() => {
       timeModule();
       hover();
-    });
+    })();
 
   function hover() {
     const linkWrap = nav.querySelector('.nav_main') as HTMLElement;

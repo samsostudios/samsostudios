@@ -15,6 +15,11 @@ export const getTime = () => {
 export const timeModule = () => {
   const timeModule = document.querySelector('.info-module_component.is-time') as HTMLElement;
 
+  timeModule &&
+    (() => {
+      updateModule();
+    })();
+
   function updateModule() {
     const now: Date = new Date();
     const hours = now.getHours() % 12 || 12;
@@ -30,6 +35,4 @@ export const timeModule = () => {
     timeModule.children[0].innerHTML = formattedTime;
     setTimeout(updateModule, 1000);
   }
-
-  updateModule();
 };

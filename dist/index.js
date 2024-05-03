@@ -4267,6 +4267,9 @@
   };
   var timeModule = () => {
     const timeModule3 = document.querySelector(".info-module_component.is-time");
+    timeModule3 && (() => {
+      updateModule();
+    })();
     function updateModule() {
       const now = /* @__PURE__ */ new Date();
       const hours = now.getHours() % 12 || 12;
@@ -4277,7 +4280,6 @@
       timeModule3.children[0].innerHTML = formattedTime;
       setTimeout(updateModule, 1e3);
     }
-    updateModule();
   };
 
   // src/components/nav.ts
@@ -4286,7 +4288,7 @@
     nav3 !== null && (() => {
       timeModule();
       hover();
-    });
+    })();
     function hover() {
       const linkWrap = nav3.querySelector(".nav_main");
       const navLinks = [...nav3.querySelectorAll(".nav_link")];
@@ -4389,9 +4391,25 @@
   // src/modules/cursor.ts
   var cursor = () => {
     const cursor2 = document.querySelector(".cursor_component");
-    console.log(cursor2);
     cursor2 && (() => {
-      console.log("Cursor");
+      const cursorSpeed = parseFloat(cursor2.dataset["cursorSpeed"]);
+      gsapWithCSS.set(cursor2, { xPercent: -50, yPercent: 0 });
+      const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+      const mouse = { x: pos.x, y: pos.y };
+      const speed = 0.2;
+      const xSet = gsapWithCSS.quickSetter(cursor2, "x", "px");
+      const ySet = gsapWithCSS.quickSetter(cursor2, "y", "px");
+      window.addEventListener("mousemove", (e) => {
+        mouse.x = e.x;
+        mouse.y = e.y;
+      });
+      gsapWithCSS.ticker.add(() => {
+        const dt = 1 - Math.pow(1 - speed, gsapWithCSS.ticker.deltaRatio());
+        pos.x += (mouse.x - pos.x) * cursorSpeed * dt;
+        pos.y += (mouse.y - pos.y) * cursorSpeed * dt - 0.5;
+        xSet(pos.x);
+        ySet(pos.y);
+      });
     })();
   };
 
