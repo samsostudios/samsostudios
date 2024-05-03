@@ -4297,7 +4297,6 @@
       gsapWithCSS.set(linkHoverElement, { opacity: 0, width: navLinks[0].clientWidth });
       for (const i in navLinks) {
         const setLink = navLinks[i];
-        console.log("set", setLink);
         setLink.addEventListener("mouseover", (e) => {
           const target = e.target;
           const bounds = target.getBoundingClientRect();

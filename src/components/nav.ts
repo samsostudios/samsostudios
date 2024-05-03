@@ -22,7 +22,6 @@ export const nav = () => {
 
     for (const i in navLinks) {
       const setLink = navLinks[i] as HTMLElement;
-      console.log('set', setLink);
       setLink.addEventListener('mouseover', (e) => {
         const target = e.target as HTMLElement;
         const bounds = target.getBoundingClientRect();
