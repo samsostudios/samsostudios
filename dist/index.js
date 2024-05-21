@@ -6,48 +6,6 @@
     () => location.reload()
   );
 
-  // node_modules/@finsweet/ts-utils/dist/webflow/breakpoints.js
-  var WEBFLOW_BREAKPOINTS = /* @__PURE__ */ new Map([
-    ["tiny", "(max-width: 479px)"],
-    ["small", "(max-width: 767px)"],
-    ["medium", "(max-width: 991px)"],
-    ["main", "(min-width: 992px)"]
-  ]);
-
-  // src/utils/breakpoints.ts
-  var breakpoints = () => {
-    let device = "";
-    const wBreakpoints = [...WEBFLOW_BREAKPOINTS];
-    const breakpoints2 = {
-      tiny: 0,
-      small: 0,
-      medium: 0,
-      main: 0
-    };
-    window.addEventListener("resize", () => {
-      init4();
-    });
-    init4();
-    function init4() {
-      for (const i in wBreakpoints) {
-        const nametTemp = wBreakpoints[i][0];
-        const pointTemp = parseInt(wBreakpoints[i][1].split(":")[1].split("p")[0]);
-        breakpoints2[nametTemp] = pointTemp;
-      }
-      const curWidth = window.innerWidth;
-      if (curWidth > breakpoints2.main) {
-        device = "desktop";
-      } else if (curWidth < breakpoints2.main && curWidth > breakpoints2.small) {
-        device = "tablet";
-      } else if (curWidth < breakpoints2.medium && curWidth > breakpoints2.tiny) {
-        device = "mobile-landscape";
-      } else if (curWidth < breakpoints2.small) {
-        device = "mobile-portrait";
-      }
-    }
-    return [device, window.innerWidth, window.innerHeight];
-  };
-
   // node_modules/gsap/gsap-core.js
   function _assertThisInitialized(self) {
     if (self === void 0) {
@@ -4257,55 +4215,6 @@
   var gsapWithCSS = gsap.registerPlugin(CSSPlugin) || gsap;
   var TweenMaxWithCSS = gsapWithCSS.core.Tween;
 
-  // src/components/frame.ts
-  var frame = () => {
-    const siteFrame = document.querySelector(".site_frame");
-    siteFrame !== null && (() => {
-      const frameFill = siteFrame.querySelector(".frame_fill");
-      const frameBorder = siteFrame.querySelector(".frame_stroke");
-      const scaleData = frameFill.dataset.frameScale;
-      const defaultScale = parseFloat(scaleData);
-      const mobileScale = defaultScale * 2;
-      let frameScale = defaultScale;
-      setup();
-      window.addEventListener("resize", (e) => {
-        setup();
-      });
-      function setup() {
-        const deviceInfo = breakpoints();
-        console.log(`${deviceInfo[0]} [w: ${deviceInfo[1]}  h: ${deviceInfo[2]}]`);
-        if (deviceInfo[0] === "mobile-landscape" || deviceInfo[0] === "mobile-portrait") {
-          frameScale = mobileScale;
-        } else {
-          frameScale = defaultScale;
-        }
-        const frameTarget = window.innerWidth * frameScale;
-        const frameMaxWidth = window.innerWidth - frameTarget;
-        const frameMaxHeight = window.innerHeight - frameTarget;
-        const ogFrame = `polygon(0% 0%, 0% 100%, 1% 100%, 1% 1%, 99% 1%, 99% 99%, 1% 99%, 0% 100%, 100% 100%, 100% 0%)`;
-        const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${frameMaxHeight}px, ${frameTarget}px ${frameMaxHeight}px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
-        gsapWithCSS.set(frameFill, { duration: 0, clipPath: frameClip });
-        gsapWithCSS.set(frameBorder, {
-          duration: 0,
-          width: `${frameMaxWidth - frameTarget}px`,
-          height: `${frameMaxHeight - frameTarget}px`
-        });
-      }
-      function guides(calc) {
-        const frameGuides = [...document.querySelectorAll(".frame_guide")];
-        for (const i in frameGuides) {
-          if (frameGuides[i].classList.contains("horizontal")) {
-            frameGuides[i].classList.contains("top") ? gsapWithCSS.set(frameGuides[i], { top: calc }) : gsapWithCSS.set(frameGuides[i], { bottom: calc });
-            gsapWithCSS.set(frameGuides[i], { width: calc });
-          } else if (frameGuides[i].classList.contains("vertical")) {
-            frameGuides[i].classList.contains("right") ? gsapWithCSS.set(frameGuides[i], { right: calc }) : gsapWithCSS.set(frameGuides[i], { left: calc });
-            gsapWithCSS.set(frameGuides[i], { height: calc });
-          }
-        }
-      }
-    })();
-  };
-
   // src/utils/fomattedTime.ts
   var getTime = () => {
     const now = /* @__PURE__ */ new Date();
@@ -6842,7 +6751,6 @@
   window.Webflow.push(() => {
     const time = getTime();
     console.log("// \u{1F30E} -- " + time + " //");
-    frame();
     colorMode();
     cursor();
     nav();

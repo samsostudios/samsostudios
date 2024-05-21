@@ -1,5 +1,6 @@
 import { frame } from '$components/frame';
 import { nav } from '$components/nav';
+import { tempFrame } from '$components/tempFrame';
 import { colorMode } from '$modules/colorMode';
 import { cursor } from '$modules/cursor';
 import { home } from '$pages/home';
@@ -11,7 +12,8 @@ window.Webflow.push(() => {
   console.log('// 🌎 -- ' + time + ' //');
 
   // Global Modules
-  frame();
+  // tempFrame();
+  // frame();
   colorMode();
   cursor();
   nav();

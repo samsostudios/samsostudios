@@ -2,16 +2,13 @@
 import { breakpoints } from '$utils/breakpoints';
 import { gsap } from 'gsap';
 
-export const frame = () => {
+export const tempFrame = () => {
   const siteFrame = document.querySelector('.site_frame') as HTMLElement;
-  console.log('here', siteFrame);
 
   siteFrame !== null &&
     (() => {
       const frameFill = siteFrame.querySelector('.frame_fill') as HTMLElement;
       const frameBorder = siteFrame.querySelector('.frame_stroke') as HTMLElement;
-
-      console.log('here', frameFill);
 
       const scaleData = frameFill.dataset.frameScale as string;
       const defaultScale = parseFloat(scaleData);
@@ -35,18 +32,25 @@ export const frame = () => {
         }
 
         const frameTarget = window.innerWidth * frameScale;
+        const frameTargetBottom = window.innerWidth * (frameScale * 4);
         const frameMaxWidth = window.innerWidth - frameTarget;
         const frameMaxHeight = window.innerHeight - frameTarget;
 
+        console.log('TTT', frameTarget, frameTargetBottom);
+
         const ogFrame = `polygon(0% 0%, 0% 100%, 1% 100%, 1% 1%, 99% 1%, 99% 99%, 1% 99%, 0% 100%, 100% 100%, 100% 0%)`;
-        const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${frameMaxHeight}px, ${frameTarget}px ${frameMaxHeight}px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
+        const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${
+          window.innerHeight - frameTargetBottom
+        }px, ${frameTarget}px ${
+          window.innerHeight - frameTargetBottom
+        }px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
 
         // hSet(frameMaxHeight - frameTarget);
         gsap.set(frameFill, { duration: 0, clipPath: frameClip });
         gsap.set(frameBorder, {
           duration: 0,
           width: `${frameMaxWidth - frameTarget}px`,
-          height: `${frameMaxHeight - frameTarget}px`,
+          height: `${frameMaxHeight - frameTargetBottom}px`,
         });
 
         // guides(frameTarget);
