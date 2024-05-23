@@ -6,6 +6,48 @@
     () => location.reload()
   );
 
+  // node_modules/@finsweet/ts-utils/dist/webflow/breakpoints.js
+  var WEBFLOW_BREAKPOINTS = /* @__PURE__ */ new Map([
+    ["tiny", "(max-width: 479px)"],
+    ["small", "(max-width: 767px)"],
+    ["medium", "(max-width: 991px)"],
+    ["main", "(min-width: 992px)"]
+  ]);
+
+  // src/utils/breakpoints.ts
+  var breakpoints = () => {
+    let device = "";
+    const wBreakpoints = [...WEBFLOW_BREAKPOINTS];
+    const breakpoints2 = {
+      tiny: 0,
+      small: 0,
+      medium: 0,
+      main: 0
+    };
+    window.addEventListener("resize", () => {
+      init4();
+    });
+    init4();
+    function init4() {
+      for (const i in wBreakpoints) {
+        const nametTemp = wBreakpoints[i][0];
+        const pointTemp = parseInt(wBreakpoints[i][1].split(":")[1].split("p")[0]);
+        breakpoints2[nametTemp] = pointTemp;
+      }
+      const curWidth = window.innerWidth;
+      if (curWidth > breakpoints2.main) {
+        device = "desktop";
+      } else if (curWidth < breakpoints2.main && curWidth > breakpoints2.small) {
+        device = "tablet";
+      } else if (curWidth < breakpoints2.medium && curWidth > breakpoints2.tiny) {
+        device = "mobile-landscape";
+      } else if (curWidth < breakpoints2.small) {
+        device = "mobile-portrait";
+      }
+    }
+    return [device, window.innerWidth, window.innerHeight];
+  };
+
   // node_modules/gsap/gsap-core.js
   function _assertThisInitialized(self) {
     if (self === void 0) {
@@ -4215,7 +4257,7 @@
   var gsapWithCSS = gsap.registerPlugin(CSSPlugin) || gsap;
   var TweenMaxWithCSS = gsapWithCSS.core.Tween;
 
-  // src/utils/fomattedTime.ts
+  // src/utils/time.ts
   var getTime = () => {
     const now = /* @__PURE__ */ new Date();
     const hours = now.getHours() % 12 || 12;
@@ -4223,128 +4265,92 @@
     const seconds = now.getSeconds();
     const period = hours >= 12 ? "PM" : "AM";
     const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${period}`;
-    return formattedTime;
-  };
-  var timeModule = () => {
-    const timeModule3 = document.querySelector(".info-module_component.is-time");
-    timeModule3 && (() => {
-      updateModule();
-    })();
-    function updateModule() {
-      const now = /* @__PURE__ */ new Date();
-      const hours = now.getHours() % 12 || 12;
-      const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
-      const period = now.getHours() >= 12 ? "PM" : "AM";
-      const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${period}`;
-      timeModule3.children[0].innerHTML = formattedTime;
-      setTimeout(updateModule, 1e3);
-    }
+    const militaryTime = `${now.getHours().toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    return [formattedTime, militaryTime];
   };
 
-  // src/components/nav.ts
-  var nav = () => {
-    const nav3 = document.querySelector(".nav_component");
-    nav3 !== null && (() => {
-      timeModule();
-      hover();
+  // src/components/infoComponents.ts
+  var statusComponent = () => {
+    const status = document.querySelector(".info-module_status");
+    status && (() => {
+      const newTime = getTime();
+      const businessHoursStart = 9;
+      const businessHoursEnd = 17;
+      const lastBusinessHourStart = 16;
+      const currentHour24 = parseInt(newTime[1].split(":")[0]);
+      const geoStatus = status.querySelector(".info-module_status-icon");
+      if (currentHour24 >= businessHoursStart && currentHour24 < lastBusinessHourStart) {
+        gsapWithCSS.set(geoStatus, { backgroundColor: "var(--status--active)" });
+      } else if (currentHour24 >= lastBusinessHourStart && currentHour24 < businessHoursEnd) {
+        gsapWithCSS.set(geoStatus, { backgroundColor: "var(--status--limited)" });
+      } else {
+        gsapWithCSS.set(geoStatus, { backgroundColor: "var(--status--offline)" });
+      }
     })();
-    function hover() {
-      const linkWrap = nav3.querySelector(".nav_main");
-      const navLinks = [...nav3.querySelectorAll(".nav_link")];
-      const linkHoverElement = nav3.querySelector(".nav_hover");
-      const wrapBounds = linkWrap.getBoundingClientRect();
-      gsapWithCSS.set(linkHoverElement, { opacity: 0, width: navLinks[0].clientWidth });
-      for (const i in navLinks) {
-        const setLink = navLinks[i];
-        setLink.addEventListener("mouseover", (e) => {
-          const target = e.target;
-          const bounds = target.getBoundingClientRect();
-          gsapWithCSS.to(linkHoverElement, { opacity: 0.5 });
-          gsapWithCSS.to(linkHoverElement, {
-            width: target.clientWidth,
-            x: bounds.left - wrapBounds.left - 16,
-            ease: "back.inOut(1.7)"
-          });
+  };
+  var timeComponent = () => {
+    const timeModule2 = document.querySelector(".info-module_time");
+    timeModule2 && (() => {
+      update();
+    })();
+    function update() {
+      const newTime = getTime()[0];
+      timeModule2.innerHTML = newTime;
+      setTimeout(update, 1e3);
+    }
+  };
+  var statTimeComponent = () => {
+    statusComponent();
+    timeComponent();
+  };
+
+  // src/components/tempFrame.ts
+  var tempFrame = () => {
+    const siteFrame = document.querySelector(".site_frame");
+    siteFrame !== null && (() => {
+      const frameFill = siteFrame.querySelector(".frame_fill");
+      const frameBorder = siteFrame.querySelector(".frame_stroke");
+      const scaleData = frameFill.dataset.frameScale;
+      const defaultScale = parseFloat(scaleData);
+      const mobileScale = defaultScale * 2;
+      let frameScale = defaultScale;
+      setup();
+      window.addEventListener("resize", (e) => {
+        setup();
+      });
+      function setup() {
+        const deviceInfo = breakpoints();
+        if (deviceInfo[0] === "mobile-landscape" || deviceInfo[0] === "mobile-portrait") {
+          frameScale = mobileScale;
+        } else {
+          frameScale = defaultScale;
+        }
+        const frameTarget = window.innerWidth * frameScale;
+        const frameTargetBottom = window.innerWidth * (frameScale * 4);
+        const frameMaxWidth = window.innerWidth - frameTarget;
+        const frameMaxHeight = window.innerHeight - frameTarget;
+        const ogFrame = `polygon(0% 0%, 0% 100%, 1% 100%, 1% 1%, 99% 1%, 99% 99%, 1% 99%, 0% 100%, 100% 100%, 100% 0%)`;
+        const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${window.innerHeight}px, ${frameTarget}px ${window.innerHeight}px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
+        gsapWithCSS.set(frameFill, { duration: 0, clipPath: frameClip });
+        gsapWithCSS.set(frameBorder, {
+          duration: 0,
+          width: `${frameMaxWidth - frameTarget}px`,
+          height: `${frameMaxHeight - 96}px`
         });
       }
-      linkWrap.addEventListener("mouseleave", () => {
-        const tl = gsapWithCSS.timeline();
-        tl.to(linkHoverElement, { opacity: 0 });
-        tl.to(linkHoverElement, { width: navLinks[0].clientWidth, x: 0 });
-      });
-    }
-  };
-
-  // src/modules/colorMode.ts
-  var colorMode = () => {
-    const colorSetup = {
-      primary: "",
-      secondary: "",
-      "invert-p": "",
-      "invert-s": "",
-      glass: "",
-      accent: ""
-    };
-    const curMode = getCurrentColorMode();
-    const modeToggles = [...document.querySelectorAll(".mode-toggle_indicator")];
-    updateColorSetup(curMode);
-    for (let i = 0; i < modeToggles.length - 1; i++) {
-      const temp = modeToggles[i];
-      temp.addEventListener("click", (e) => {
-        const target = e.target;
-        const targetMode = target.dataset.xmode;
-        updateColorSetup(targetMode);
-      });
-    }
-    function getCurrentColorMode() {
-      let defaultMode = "d";
-      const modeHistory = localStorage.getItem("cmode");
-      if (modeHistory === null) {
-        localStorage.setItem("cmode", defaultMode);
-      } else if (modeHistory !== defaultMode) {
-        defaultMode = modeHistory;
+      function guides(calc) {
+        const frameGuides = [...document.querySelectorAll(".frame_guide")];
+        for (const i in frameGuides) {
+          if (frameGuides[i].classList.contains("horizontal")) {
+            frameGuides[i].classList.contains("top") ? gsapWithCSS.set(frameGuides[i], { top: calc }) : gsapWithCSS.set(frameGuides[i], { bottom: calc });
+            gsapWithCSS.set(frameGuides[i], { width: calc });
+          } else if (frameGuides[i].classList.contains("vertical")) {
+            frameGuides[i].classList.contains("right") ? gsapWithCSS.set(frameGuides[i], { right: calc }) : gsapWithCSS.set(frameGuides[i], { left: calc });
+            gsapWithCSS.set(frameGuides[i], { height: calc });
+          }
+        }
       }
-      return defaultMode;
-    }
-    function updateColorSetup(mode) {
-      const style = getComputedStyle(document.body);
-      for (const item in colorSetup) {
-        const getVar = style.getPropertyValue(`--xmode-${mode}--${item}`);
-        colorSetup[item] = getVar;
-      }
-      localStorage.setItem("cmode", mode);
-      setColor();
-    }
-    function setColor() {
-      const body = document.querySelector("body");
-      const navHover = document.querySelector(".nav_hover");
-      gsapWithCSS.to(body, {
-        backgroundColor: colorSetup["primary"],
-        color: colorSetup["invert-p"]
-      });
-      navHover !== null && gsapWithCSS.to(navHover, { borderColor: colorSetup["invert-p"] });
-      const modePrimary = [...document.querySelectorAll(".mode_primary")];
-      const modeSecondary = [...document.querySelectorAll(".mode_secondary")];
-      const modePrimaryInvert = [...document.querySelectorAll(".mode_primary-invert")];
-      const modeSecondaryInvert = [...document.querySelectorAll(".mode_secondary-invert")];
-      const modeAccent = [...document.querySelectorAll(".mode_accent")];
-      if (modePrimary.length !== 0) {
-        gsapWithCSS.to(modePrimary, { backgroundColor: colorSetup["primary"] });
-      }
-      if (modeSecondary.length !== 0) {
-        gsapWithCSS.to(modeSecondary, { backgroundColor: colorSetup["secondary"] });
-      }
-      if (modePrimaryInvert.length !== 0) {
-        gsapWithCSS.to(modePrimaryInvert, { backgroundColor: colorSetup["invert-p"] });
-      }
-      if (modeSecondaryInvert.length !== 0) {
-        gsapWithCSS.to(modeSecondaryInvert, { backgroundColor: colorSetup["invert-s"] });
-      }
-      if (modeAccent.length !== 0) {
-        gsapWithCSS.to(modeAccent, { backgroundColor: colorSetup["accent"] });
-      }
-    }
+    })();
   };
 
   // src/modules/cursor.ts
@@ -6749,11 +6755,10 @@
   // src/index.ts
   window.Webflow ||= [];
   window.Webflow.push(() => {
-    const time = getTime();
-    console.log("// \u{1F30E} -- " + time + " //");
-    colorMode();
+    console.log("// \u{1F30E} -- v0.0.1  //");
+    tempFrame();
+    statTimeComponent();
     cursor();
-    nav();
     const windowLocation = window.location.pathname;
     if (windowLocation === "/") {
       home();

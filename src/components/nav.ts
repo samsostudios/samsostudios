@@ -1,5 +1,5 @@
 // eslint-disable-next-line simple-import-sort/imports
-import { timeModule } from '$utils/fomattedTime';
+// import { timeModule } from '$utils/time';
 import { gsap } from 'gsap';
 
 export const nav = () => {
@@ -7,7 +7,7 @@ export const nav = () => {
 
   nav !== null &&
     (() => {
-      timeModule();
+      // timeModule();
       hover();
     })();
 

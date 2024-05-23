@@ -23,7 +23,7 @@ export const tempFrame = () => {
 
       function setup() {
         const deviceInfo = breakpoints();
-        console.log(`${deviceInfo[0]} [w: ${deviceInfo[1]}  h: ${deviceInfo[2]}]`);
+        // console.log(`${deviceInfo[0]} [w: ${deviceInfo[1]}  h: ${deviceInfo[2]}]`);
 
         if (deviceInfo[0] === 'mobile-landscape' || deviceInfo[0] === 'mobile-portrait') {
           frameScale = mobileScale;
@@ -36,21 +36,15 @@ export const tempFrame = () => {
         const frameMaxWidth = window.innerWidth - frameTarget;
         const frameMaxHeight = window.innerHeight - frameTarget;
 
-        console.log('TTT', frameTarget, frameTargetBottom);
-
         const ogFrame = `polygon(0% 0%, 0% 100%, 1% 100%, 1% 1%, 99% 1%, 99% 99%, 1% 99%, 0% 100%, 100% 100%, 100% 0%)`;
-        const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${
-          window.innerHeight - frameTargetBottom
-        }px, ${frameTarget}px ${
-          window.innerHeight - frameTargetBottom
-        }px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
+        const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${window.innerHeight}px, ${frameTarget}px ${window.innerHeight}px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
 
         // hSet(frameMaxHeight - frameTarget);
         gsap.set(frameFill, { duration: 0, clipPath: frameClip });
         gsap.set(frameBorder, {
           duration: 0,
           width: `${frameMaxWidth - frameTarget}px`,
-          height: `${frameMaxHeight - frameTargetBottom}px`,
+          height: `${frameMaxHeight - 96}px`,
         });
 
         // guides(frameTarget);

@@ -1,6 +1,6 @@
 import { homeScroll } from '$components/homeScroll';
 import { nav } from '$components/nav';
-import { timeModule } from '$utils/fomattedTime';
+import { timeModule } from '$utils/time';
 
 export const home = () => {
   // console.log('home');
