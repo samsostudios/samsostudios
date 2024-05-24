@@ -6,48 +6,6 @@
     () => location.reload()
   );
 
-  // node_modules/@finsweet/ts-utils/dist/webflow/breakpoints.js
-  var WEBFLOW_BREAKPOINTS = /* @__PURE__ */ new Map([
-    ["tiny", "(max-width: 479px)"],
-    ["small", "(max-width: 767px)"],
-    ["medium", "(max-width: 991px)"],
-    ["main", "(min-width: 992px)"]
-  ]);
-
-  // src/utils/breakpoints.ts
-  var breakpoints = () => {
-    let device = "";
-    const wBreakpoints = [...WEBFLOW_BREAKPOINTS];
-    const breakpoints2 = {
-      tiny: 0,
-      small: 0,
-      medium: 0,
-      main: 0
-    };
-    window.addEventListener("resize", () => {
-      init4();
-    });
-    init4();
-    function init4() {
-      for (const i in wBreakpoints) {
-        const nametTemp = wBreakpoints[i][0];
-        const pointTemp = parseInt(wBreakpoints[i][1].split(":")[1].split("p")[0]);
-        breakpoints2[nametTemp] = pointTemp;
-      }
-      const curWidth = window.innerWidth;
-      if (curWidth > breakpoints2.main) {
-        device = "desktop";
-      } else if (curWidth < breakpoints2.main && curWidth > breakpoints2.small) {
-        device = "tablet";
-      } else if (curWidth < breakpoints2.medium && curWidth > breakpoints2.tiny) {
-        device = "mobile-landscape";
-      } else if (curWidth < breakpoints2.small) {
-        device = "mobile-portrait";
-      }
-    }
-    return [device, window.innerWidth, window.innerHeight];
-  };
-
   // node_modules/gsap/gsap-core.js
   function _assertThisInitialized(self) {
     if (self === void 0) {
@@ -4257,125 +4215,35 @@
   var gsapWithCSS = gsap.registerPlugin(CSSPlugin) || gsap;
   var TweenMaxWithCSS = gsapWithCSS.core.Tween;
 
-  // src/utils/time.ts
-  var getTime = () => {
-    const now = /* @__PURE__ */ new Date();
-    const hours = now.getHours() % 12 || 12;
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    const period = hours >= 12 ? "PM" : "AM";
-    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${period}`;
-    const militaryTime = `${now.getHours().toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    return [formattedTime, militaryTime];
-  };
-
-  // src/components/infoComponents.ts
-  var statusComponent = () => {
-    const status = document.querySelector(".info-module_status");
-    status && (() => {
-      const newTime = getTime();
-      const businessHoursStart = 9;
-      const businessHoursEnd = 17;
-      const lastBusinessHourStart = 16;
-      const currentHour24 = parseInt(newTime[1].split(":")[0]);
-      const geoStatus = status.querySelector(".info-module_status-icon");
-      if (currentHour24 >= businessHoursStart && currentHour24 < lastBusinessHourStart) {
-        gsapWithCSS.set(geoStatus, { backgroundColor: "var(--status--active)" });
-      } else if (currentHour24 >= lastBusinessHourStart && currentHour24 < businessHoursEnd) {
-        gsapWithCSS.set(geoStatus, { backgroundColor: "var(--status--limited)" });
-      } else {
-        gsapWithCSS.set(geoStatus, { backgroundColor: "var(--status--offline)" });
-      }
-    })();
-  };
-  var timeComponent = () => {
-    const timeModule2 = document.querySelector(".info-module_time");
-    timeModule2 && (() => {
-      update();
-    })();
-    function update() {
-      const newTime = getTime()[0];
-      timeModule2.innerHTML = newTime;
-      setTimeout(update, 1e3);
-    }
-  };
-  var statTimeComponent = () => {
-    statusComponent();
-    timeComponent();
-  };
-
-  // src/components/tempFrame.ts
-  var tempFrame = () => {
-    const siteFrame = document.querySelector(".site_frame");
-    siteFrame !== null && (() => {
-      const frameFill = siteFrame.querySelector(".frame_fill");
-      const frameBorder = siteFrame.querySelector(".frame_stroke");
-      const scaleData = frameFill.dataset.frameScale;
-      const defaultScale = parseFloat(scaleData);
-      const mobileScale = defaultScale * 2;
-      let frameScale = defaultScale;
-      setup();
-      window.addEventListener("resize", (e) => {
-        setup();
-      });
-      function setup() {
-        const deviceInfo = breakpoints();
-        if (deviceInfo[0] === "mobile-landscape" || deviceInfo[0] === "mobile-portrait") {
-          frameScale = mobileScale;
-        } else {
-          frameScale = defaultScale;
-        }
-        const frameTarget = window.innerWidth * frameScale;
-        const frameTargetBottom = window.innerWidth * (frameScale * 4);
-        const frameMaxWidth = window.innerWidth - frameTarget;
-        const frameMaxHeight = window.innerHeight - frameTarget;
-        const ogFrame = `polygon(0% 0%, 0% 100%, 1% 100%, 1% 1%, 99% 1%, 99% 99%, 1% 99%, 0% 100%, 100% 100%, 100% 0%)`;
-        const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${window.innerHeight}px, ${frameTarget}px ${window.innerHeight}px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
-        gsapWithCSS.set(frameFill, { duration: 0, clipPath: frameClip });
-        gsapWithCSS.set(frameBorder, {
-          duration: 0,
-          width: `${frameMaxWidth - frameTarget}px`,
-          height: `${frameMaxHeight - 96}px`
-        });
-      }
-      function guides(calc) {
-        const frameGuides = [...document.querySelectorAll(".frame_guide")];
-        for (const i in frameGuides) {
-          if (frameGuides[i].classList.contains("horizontal")) {
-            frameGuides[i].classList.contains("top") ? gsapWithCSS.set(frameGuides[i], { top: calc }) : gsapWithCSS.set(frameGuides[i], { bottom: calc });
-            gsapWithCSS.set(frameGuides[i], { width: calc });
-          } else if (frameGuides[i].classList.contains("vertical")) {
-            frameGuides[i].classList.contains("right") ? gsapWithCSS.set(frameGuides[i], { right: calc }) : gsapWithCSS.set(frameGuides[i], { left: calc });
-            gsapWithCSS.set(frameGuides[i], { height: calc });
-          }
-        }
-      }
-    })();
-  };
-
-  // src/modules/cursor.ts
-  var cursor = () => {
-    const cursor2 = document.querySelector(".cursor_component");
-    cursor2 && (() => {
-      const cursorSpeed = parseFloat(cursor2.dataset["cursorSpeed"]);
-      gsapWithCSS.set(cursor2, { xPercent: -50, yPercent: 0 });
-      const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-      const mouse = { x: pos.x, y: pos.y };
-      const speed = 0.2;
-      const xSet = gsapWithCSS.quickSetter(cursor2, "x", "px");
-      const ySet = gsapWithCSS.quickSetter(cursor2, "y", "px");
-      window.addEventListener("mousemove", (e) => {
-        mouse.x = e.x;
-        mouse.y = e.y;
-      });
-      gsapWithCSS.ticker.add(() => {
-        const dt = 1 - Math.pow(1 - speed, gsapWithCSS.ticker.deltaRatio());
-        pos.x += (mouse.x - pos.x) * cursorSpeed * dt;
-        pos.y += (mouse.y - pos.y) * cursorSpeed * dt - 0.5;
-        xSet(pos.x);
-        ySet(pos.y);
-      });
-    })();
+  // src/modules/imageTracking.ts
+  var imageTracking = () => {
+    const maskedImage = document.querySelector(".section_mask-image");
+    const mask = document.querySelector(".section_hero-mask");
+    const maskWidth = parseInt(getComputedStyle(mask).width);
+    const maskHeight = parseInt(getComputedStyle(mask).height);
+    const cursorSpeed = 0.4;
+    gsapWithCSS.set(mask, { xPercent: -50, yPercent: -50 });
+    gsapWithCSS.set(maskedImage, { x: maskWidth / 2, y: maskHeight / 2 });
+    const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    const mouse = { x: pos.x, y: pos.y };
+    const speed = 0.2;
+    const xSet = gsapWithCSS.quickSetter(mask, "x", "px");
+    const xSetB = gsapWithCSS.quickSetter(maskedImage, "x", "px");
+    const ySet = gsapWithCSS.quickSetter(mask, "y", "px");
+    const ySetB = gsapWithCSS.quickSetter(maskedImage, "y", "px");
+    window.addEventListener("mousemove", (e) => {
+      mouse.x = e.x;
+      mouse.y = e.y;
+    });
+    gsapWithCSS.ticker.add(() => {
+      const dt = 1 - Math.pow(1 - speed, gsapWithCSS.ticker.deltaRatio());
+      pos.x += (mouse.x - pos.x) * cursorSpeed * dt;
+      pos.y += (mouse.y - pos.y) * cursorSpeed * dt - 0.5;
+      xSet(pos.x);
+      xSetB(-pos.x + maskWidth / 2);
+      ySet(pos.y);
+      ySetB(-pos.y + maskHeight / 2);
+    });
   };
 
   // node_modules/gsap/Observer.js
@@ -6588,180 +6456,14 @@
 
   // src/components/homeScroll.ts
   gsapWithCSS.registerPlugin(ScrollTrigger2, Observer);
-  var homeScroll = () => {
-    const viewSwitch = document.querySelector(".info-module_component");
-    init4();
-    handleSwitch();
-    function init4() {
-      const viewTypes = ["slide", "grid"];
-      const defaultView = viewTypes[0];
-      if (defaultView === "slide") {
-        slideScroll();
-      } else {
-        gridScroll();
-      }
-    }
-    function handleSwitch() {
-      let viewToggled = false;
-      viewSwitch.addEventListener("click", () => {
-        viewToggled = !viewToggled;
-        if (viewToggled) {
-          console.log("show grid");
-        } else {
-          console.log("show slide");
-        }
-      });
-    }
-  };
-  var slideScroll = () => {
-    const nav3 = document.querySelector(".nav_component");
-    const slideHeader = document.querySelector(".home-header_component");
-    const slideWrapper = document.querySelector(".home-slide_component");
-    const slideList = document.querySelector(".home-slide_list");
-    const slideItems = [...document.querySelectorAll(".home-slide_item")];
-    const slideScale = parseFloat(slideList.dataset.listScale);
-    console.log("ITEMS", slideItems);
-    let currentIndex = 0;
-    const maxIndex = slideItems.length - 1;
-    let allowScroll = true;
-    const scrollTimeout = gsapWithCSS.delayedCall(1, () => {
-      console.log("timeout done");
-      allowScroll = true;
-    }).pause();
-    const sliderProps = {
-      activeWidth: 0,
-      inactiveWidth: 0,
-      height: 0,
-      scale: slideScale,
-      duration: 1,
-      ease: "power4.inOut"
-    };
-    updateSliderProps();
-    init4();
-    window.addEventListener("resize", () => {
-      updateSliderProps();
-    });
-    function init4() {
-      gsapWithCSS.set(slideWrapper, { height: sliderProps["height"] });
-      gsapWithCSS.set(slideList, { height: sliderProps["height"] * slideScale });
-      gsapWithCSS.set(slideItems, { height: "100%" });
-      slideItems.forEach((e, i) => {
-        const isFirst = i === 0;
-        const isSecond = i === 1;
-        gsapWithCSS.set(e, { position: "absolute" });
-        if (isFirst) {
-          gsapWithCSS.set(e, { width: sliderProps["activeWidth"], zIndex: 1 });
-        } else if (isSecond) {
-          gsapWithCSS.set(e, { width: sliderProps["inactiveWidth"], right: 0, zIndex: 0 });
-        } else {
-          gsapWithCSS.set(e, { width: 0, right: 0, opacity: 0, zIndex: -1 });
-        }
-      });
-    }
-    function updateSliderProps() {
-      const slideGap = 16;
-      const slideActiveRatio = 0.7;
-      const slideHeight = nav3.getBoundingClientRect().top - slideHeader.getBoundingClientRect().bottom - slideGap * 2;
-      const slideActiveWidth = slideList.clientWidth * slideActiveRatio - slideGap / 2;
-      const slideNextWidth = slideList.clientWidth * (1 - slideActiveRatio) - slideGap / 2;
-      sliderProps["activeWidth"] = slideActiveWidth;
-      sliderProps["inactiveWidth"] = slideNextWidth;
-      sliderProps["height"] = slideHeight;
-    }
-    function slideController() {
-      Observer.create({
-        target: window,
-        type: "wheel,touch",
-        // onUp: () => allowScroll && regressScroll(),
-        // onDown: () => allowScroll && advanceScroll(),
-        onWheel: (e) => {
-          if (allowScroll && e.deltaY > 20) {
-            advanceScroll();
-          } else if (allowScroll && e.deltaY < -20) {
-            regressScroll();
-          }
-        }
-      });
-    }
-    function advanceScroll() {
-      console.log("advance", currentIndex);
-      allowScroll = false;
-      const trackIndex = { cur: currentIndex, next: currentIndex + 1, preload: currentIndex + 2 };
-      if (trackIndex["preload"] > maxIndex) {
-        trackIndex["preload"] = 0;
-      } else if (trackIndex["next"] > maxIndex) {
-        console.log("YOOOOOOOOOOOOOOOOOOOOO");
-        trackIndex["next"] = 0;
-      }
-      console.log("TRACKED", trackIndex, maxIndex);
-      const current = slideItems[trackIndex["cur"]];
-      const next = slideItems[trackIndex["next"]];
-      const preload = slideItems[trackIndex["preload"]];
-      console.log(current, next, preload);
-      const tl = gsapWithCSS.timeline({
-        onComplete: () => {
-          scrollTimeout.restart(true);
-        }
-      });
-      if (currentIndex === maxIndex) {
-        console.log("at end");
-        currentIndex = 0;
-      } else {
-        currentIndex += 1;
-      }
-    }
-    function regressScroll() {
-    }
-  };
-  var gridScroll = () => {
-    console.log("gridScroll");
-    init4();
-    function init4() {
-      const gridItems = [...document.querySelectorAll(".home-grid_item")];
-      const itemTotal = gridItems.length;
-      const itemPerRow = 4;
-      console.log("MOD", itemTotal / 2);
-      const spacerArrangments = [
-        [1, 0, 0, 1],
-        [0, 0, 1, 1],
-        [1, 0, 1, 0],
-        [0, 1, 0, 1],
-        [1, 1, 0, 0]
-      ];
-      const spacerItem = document.createElement("div");
-      spacerItem.classList.add("home-grid_item", "is-spacer");
-      for (let i = 0; i < itemTotal / 2; i++) {
-        console.log("ROW", i, spacerArrangments[i]);
-        const rowLayout = spacerArrangments[i];
-        for (let j = 0; j < rowLayout.length; j++) {
-          const layoutValue = rowLayout[j];
-          if (layoutValue === 0) {
-            const gridList = document.querySelector(".home-grid_list");
-            const spacerItem2 = document.createElement("div");
-            spacerItem2.classList.add("home-grid_item", "is-spacer");
-            const insertIndex = itemPerRow * i + j;
-            gridList.insertBefore(spacerItem2, gridList.childNodes[insertIndex]);
-          }
-        }
-      }
-    }
-  };
-
-  // src/pages/home.ts
-  var home = () => {
-    homeScroll();
-  };
 
   // src/index.ts
   window.Webflow ||= [];
   window.Webflow.push(() => {
     console.log("// \u{1F30E} -- v0.0.1  //");
-    tempFrame();
-    statTimeComponent();
-    cursor();
+    imageTracking();
     const windowLocation = window.location.pathname;
     if (windowLocation === "/") {
-      home();
     }
   });
 })();

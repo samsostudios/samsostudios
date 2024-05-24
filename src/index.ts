@@ -4,6 +4,7 @@ import { nav } from '$components/nav';
 import { tempFrame } from '$components/tempFrame';
 import { colorMode } from '$modules/colorMode';
 import { cursor } from '$modules/cursor';
+import { imageTracking } from '$modules/imageTracking';
 import { home } from '$pages/home';
 import { getTime } from '$utils/time';
 
@@ -12,9 +13,10 @@ window.Webflow.push(() => {
   console.log('// 🌎 -- v0.0.1  //');
 
   // Global Modules
-  tempFrame();
-  statTimeComponent();
-  cursor();
+  // tempFrame();
+  // statTimeComponent();
+  // cursor();
+  imageTracking();
   // frame();
   // colorMode();
   // nav();
@@ -23,6 +25,6 @@ window.Webflow.push(() => {
   const windowLocation = window.location.pathname as string;
 
   if (windowLocation === '/') {
-    home();
+    // home();
   }
 });
