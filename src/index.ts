@@ -13,9 +13,9 @@ window.Webflow.push(() => {
   console.log('// 🌎 -- v0.0.1  //');
 
   // Global Modules
-  // tempFrame();
-  // statTimeComponent();
-  // cursor();
+  tempFrame();
+  statTimeComponent();
+  cursor();
   imageTracking();
   // frame();
   // colorMode();

@@ -6,6 +6,48 @@
     () => location.reload()
   );
 
+  // node_modules/@finsweet/ts-utils/dist/webflow/breakpoints.js
+  var WEBFLOW_BREAKPOINTS = /* @__PURE__ */ new Map([
+    ["tiny", "(max-width: 479px)"],
+    ["small", "(max-width: 767px)"],
+    ["medium", "(max-width: 991px)"],
+    ["main", "(min-width: 992px)"]
+  ]);
+
+  // src/utils/breakpoints.ts
+  var breakpoints = () => {
+    let device = "";
+    const wBreakpoints = [...WEBFLOW_BREAKPOINTS];
+    const breakpoints2 = {
+      tiny: 0,
+      small: 0,
+      medium: 0,
+      main: 0
+    };
+    window.addEventListener("resize", () => {
+      init4();
+    });
+    init4();
+    function init4() {
+      for (const i in wBreakpoints) {
+        const nametTemp = wBreakpoints[i][0];
+        const pointTemp = parseInt(wBreakpoints[i][1].split(":")[1].split("p")[0]);
+        breakpoints2[nametTemp] = pointTemp;
+      }
+      const curWidth = window.innerWidth;
+      if (curWidth > breakpoints2.main) {
+        device = "desktop";
+      } else if (curWidth < breakpoints2.main && curWidth > breakpoints2.small) {
+        device = "tablet";
+      } else if (curWidth < breakpoints2.medium && curWidth > breakpoints2.tiny) {
+        device = "mobile-landscape";
+      } else if (curWidth < breakpoints2.small) {
+        device = "mobile-portrait";
+      }
+    }
+    return [device, window.innerWidth, window.innerHeight];
+  };
+
   // node_modules/gsap/gsap-core.js
   function _assertThisInitialized(self) {
     if (self === void 0) {
@@ -4215,34 +4257,163 @@
   var gsapWithCSS = gsap.registerPlugin(CSSPlugin) || gsap;
   var TweenMaxWithCSS = gsapWithCSS.core.Tween;
 
+  // src/utils/time.ts
+  var getTime = () => {
+    const now = /* @__PURE__ */ new Date();
+    const hours = now.getHours() % 12 || 12;
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+    const period = hours >= 12 ? "PM" : "AM";
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")} ${period}`;
+    const militaryTime = `${now.getHours().toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    return [formattedTime, militaryTime];
+  };
+
+  // src/components/infoComponents.ts
+  var statusComponent = () => {
+    const status = document.querySelector(".info-module_status");
+    status && (() => {
+      const newTime = getTime();
+      const businessHoursStart = 9;
+      const businessHoursEnd = 17;
+      const lastBusinessHourStart = 16;
+      const currentHour24 = parseInt(newTime[1].split(":")[0]);
+      const geoStatus = status.querySelector(".info-module_status-icon");
+      if (currentHour24 >= businessHoursStart && currentHour24 < lastBusinessHourStart) {
+        gsapWithCSS.set(geoStatus, { backgroundColor: "var(--status--active)" });
+      } else if (currentHour24 >= lastBusinessHourStart && currentHour24 < businessHoursEnd) {
+        gsapWithCSS.set(geoStatus, { backgroundColor: "var(--status--limited)" });
+      } else {
+        gsapWithCSS.set(geoStatus, { backgroundColor: "var(--status--offline)" });
+      }
+    })();
+  };
+  var timeComponent = () => {
+    const timeModule2 = document.querySelector(".info-module_time");
+    timeModule2 && (() => {
+      update();
+    })();
+    function update() {
+      const newTime = getTime()[0];
+      timeModule2.innerHTML = newTime;
+      setTimeout(update, 1e3);
+    }
+  };
+  var statTimeComponent = () => {
+    statusComponent();
+    timeComponent();
+  };
+
+  // src/components/tempFrame.ts
+  var tempFrame = () => {
+    const siteFrame = document.querySelector(".site_frame");
+    siteFrame !== null && (() => {
+      const frameFill = siteFrame.querySelector(".frame_fill");
+      const frameBorder = siteFrame.querySelector(".frame_stroke");
+      const scaleData = frameFill.dataset.frameScale;
+      const defaultScale = parseFloat(scaleData);
+      const mobileScale = defaultScale * 2;
+      let frameScale = defaultScale;
+      setup();
+      window.addEventListener("resize", (e) => {
+        setup();
+      });
+      function setup() {
+        const deviceInfo = breakpoints();
+        if (deviceInfo[0] === "mobile-landscape" || deviceInfo[0] === "mobile-portrait") {
+          frameScale = mobileScale;
+        } else {
+          frameScale = defaultScale;
+        }
+        const frameTarget = window.innerWidth * frameScale;
+        const frameTargetBottom = window.innerWidth * (frameScale * 4);
+        const frameMaxWidth = window.innerWidth - frameTarget;
+        const frameMaxHeight = window.innerHeight - frameTarget;
+        const ogFrame = `polygon(0% 0%, 0% 100%, 1% 100%, 1% 1%, 99% 1%, 99% 99%, 1% 99%, 0% 100%, 100% 100%, 100% 0%)`;
+        const frameClip = `polygon(0% 0%, 0% 100%, ${frameTarget}px 100%, ${frameTarget}px ${frameTarget}px, ${frameMaxWidth}px ${frameTarget}px, ${frameMaxWidth}px ${window.innerHeight}px, ${frameTarget}px ${window.innerHeight}px, ${frameTarget}px 100%, 100% 100%, 100% 0%)`;
+        gsapWithCSS.set(frameFill, { duration: 0, clipPath: frameClip });
+        gsapWithCSS.set(frameBorder, {
+          duration: 0,
+          width: `${frameMaxWidth - frameTarget}px`,
+          height: `${frameMaxHeight - 96}px`
+        });
+      }
+      function guides(calc) {
+        const frameGuides = [...document.querySelectorAll(".frame_guide")];
+        for (const i in frameGuides) {
+          if (frameGuides[i].classList.contains("horizontal")) {
+            frameGuides[i].classList.contains("top") ? gsapWithCSS.set(frameGuides[i], { top: calc }) : gsapWithCSS.set(frameGuides[i], { bottom: calc });
+            gsapWithCSS.set(frameGuides[i], { width: calc });
+          } else if (frameGuides[i].classList.contains("vertical")) {
+            frameGuides[i].classList.contains("right") ? gsapWithCSS.set(frameGuides[i], { right: calc }) : gsapWithCSS.set(frameGuides[i], { left: calc });
+            gsapWithCSS.set(frameGuides[i], { height: calc });
+          }
+        }
+      }
+    })();
+  };
+
+  // src/modules/cursor.ts
+  var cursor = () => {
+    const cursor2 = document.querySelector(".cursor_component");
+    console.log("CURSOR", cursor2);
+    cursor2 && (() => {
+      const cursorSpeed = parseFloat(cursor2.dataset["cursorSpeed"]);
+      gsapWithCSS.set(cursor2, { xPercent: -50, yPercent: 0 });
+      const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+      const mouse = { x: pos.x, y: pos.y };
+      const speed = 0.2;
+      const xSet = gsapWithCSS.quickSetter(cursor2, "x", "px");
+      const ySet = gsapWithCSS.quickSetter(cursor2, "y", "px");
+      window.addEventListener("mousemove", (e) => {
+        mouse.x = e.x;
+        mouse.y = e.y;
+      });
+      gsapWithCSS.ticker.add(() => {
+        const dt = 1 - Math.pow(1 - speed, gsapWithCSS.ticker.deltaRatio());
+        pos.x += (mouse.x - pos.x) * cursorSpeed * dt;
+        pos.y += (mouse.y - pos.y) * cursorSpeed * dt - 0.5;
+        xSet(pos.x);
+        ySet(pos.y);
+      });
+    })();
+  };
+
   // src/modules/imageTracking.ts
   var imageTracking = () => {
-    const maskedImage = document.querySelector(".section_mask-image");
-    const mask = document.querySelector(".section_hero-mask");
+    const mask = document.querySelector(".standby_bg-mask");
+    const maskedImage = document.querySelector(".standby_bg-mask-image");
     const maskWidth = parseInt(getComputedStyle(mask).width);
     const maskHeight = parseInt(getComputedStyle(mask).height);
+    const beforeContent = mask;
     const cursorSpeed = 0.4;
     gsapWithCSS.set(mask, { xPercent: -50, yPercent: -50 });
     gsapWithCSS.set(maskedImage, { x: maskWidth / 2, y: maskHeight / 2 });
     const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     const mouse = { x: pos.x, y: pos.y };
+    const normalizeMouse = { x: 0, y: 0 };
     const speed = 0.2;
     const xSet = gsapWithCSS.quickSetter(mask, "x", "px");
-    const xSetB = gsapWithCSS.quickSetter(maskedImage, "x", "px");
+    const xSetM = gsapWithCSS.quickSetter(maskedImage, "x", "px");
     const ySet = gsapWithCSS.quickSetter(mask, "y", "px");
-    const ySetB = gsapWithCSS.quickSetter(maskedImage, "y", "px");
+    const ySetM = gsapWithCSS.quickSetter(maskedImage, "y", "px");
+    const ySetB = gsapWithCSS.quickSetter("--before-x", "x", "px");
     window.addEventListener("mousemove", (e) => {
       mouse.x = e.x;
       mouse.y = e.y;
+      normalizeMouse.x = e.x / window.innerWidth;
+      normalizeMouse.y = e.y / window.innerHeight;
     });
     gsapWithCSS.ticker.add(() => {
       const dt = 1 - Math.pow(1 - speed, gsapWithCSS.ticker.deltaRatio());
       pos.x += (mouse.x - pos.x) * cursorSpeed * dt;
       pos.y += (mouse.y - pos.y) * cursorSpeed * dt - 0.5;
+      normalizeMouse.x += normalizeMouse * cursorSpeed * dt;
       xSet(pos.x);
-      xSetB(-pos.x + maskWidth / 2);
+      xSetM(-pos.x + maskWidth / 2);
       ySet(pos.y);
-      ySetB(-pos.y + maskHeight / 2);
+      ySetM(-pos.y + maskHeight / 2);
+      ySetB();
     });
   };
 
@@ -6461,6 +6632,9 @@
   window.Webflow ||= [];
   window.Webflow.push(() => {
     console.log("// \u{1F30E} -- v0.0.1  //");
+    tempFrame();
+    statTimeComponent();
+    cursor();
     imageTracking();
     const windowLocation = window.location.pathname;
     if (windowLocation === "/") {
