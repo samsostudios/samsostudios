@@ -2,7 +2,6 @@ import { gsap } from 'gsap';
 
 export const cursor = () => {
   const cursor = document.querySelector('.cursor_component') as HTMLElement;
-  console.log('CURSOR', cursor);
 
   cursor &&
     (() => {

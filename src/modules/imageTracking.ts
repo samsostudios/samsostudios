@@ -6,11 +6,12 @@ export const imageTracking = () => {
   const maskWidth = parseInt(getComputedStyle(mask).width);
   const maskHeight = parseInt(getComputedStyle(mask).height);
 
-  const beforeContent = mask;
+  let offsetWidth = maskWidth / 2;
+  let offsetHeight = maskHeight / 2;
 
   const cursorSpeed = 0.4;
   gsap.set(mask, { xPercent: -50, yPercent: -50 });
-  gsap.set(maskedImage, { x: maskWidth / 2, y: maskHeight / 2 });
+  gsap.set(maskedImage, { x: offsetWidth, y: offsetHeight });
 
   const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
   const mouse = { x: pos.x, y: pos.y };
@@ -21,9 +22,14 @@ export const imageTracking = () => {
   const xSetM = gsap.quickSetter(maskedImage, 'x', 'px');
   const ySet = gsap.quickSetter(mask, 'y', 'px');
   const ySetM = gsap.quickSetter(maskedImage, 'y', 'px');
-  const ySetB = gsap.quickSetter('--before-y', 'top', 'px');
 
-  window.addEventListener('mousemove', (e) => {
+  mask.style.setProperty('--before-x', '0.5px');
+  mask.style.setProperty('--before-y', '0.5px');
+
+  mask.style.setProperty('--before-width', 'calc(100% - 2px)');
+  mask.style.setProperty('--before-height', 'calc(100% - 2px)');
+
+  document.addEventListener('mousemove', (e) => {
     mouse.x = e.x;
     mouse.y = e.y;
 
@@ -31,18 +37,70 @@ export const imageTracking = () => {
     normalizeMouse.y = e.y / window.innerHeight;
   });
 
+  document.addEventListener('mousemove', handleFirstMove);
+
   gsap.ticker.add(() => {
     const dt = 1.0 - Math.pow(1.0 - speed, gsap.ticker.deltaRatio());
 
     pos.x += (mouse.x - pos.x) * cursorSpeed * dt;
     pos.y += (mouse.y - pos.y) * cursorSpeed * dt - 0.5;
 
-    normalizeMouse.x += normalizeMouse.x * cursorSpeed * dt;
+    // console.log(offsetWidth);
 
     xSet(pos.x);
-    xSetM(-pos.x + maskWidth / 2);
+    xSetM(-pos.x + offsetWidth);
     ySet(pos.y);
-    ySetM(-pos.y + maskHeight / 2);
-    ySetB(normalizeMouse.x);
+    ySetM(-pos.y + offsetHeight);
   });
+
+  let isLarge = false;
+  window.addEventListener('dblclick', (e) => {
+    isLarge = !isLarge;
+    if (isLarge) {
+      console.log('make large');
+      const tl = gsap.timeline();
+      tl.to(mask, {
+        duration: 0.5,
+        '--before-bg': 'radial-gradient(circle, rgba(13, 15, 20, 1) 5%, rgba(13, 15, 20, 1) 90%)',
+        ease: 'power4.inOut',
+      });
+      tl.to(mask, { width: maskWidth * 2, height: maskHeight * 2, ease: 'power4.inOut' });
+      tl.to(mask, {
+        duration: 0.5,
+        '--before-bg': 'radial-gradient(circle, rgba(13, 15, 20, 0) 5%, rgba(13, 15, 20, 0.5) 90%)',
+        ease: 'power4.inOut',
+      });
+      setTimeout(() => {
+        offsetWidth = (maskWidth * 2) / 2;
+        offsetHeight = (maskHeight * 2) / 2;
+      }, 500);
+    } else {
+      console.log('make small');
+      const tl = gsap.timeline();
+      tl.to(mask, {
+        duration: 0.5,
+        '--before-bg': 'radial-gradient(circle, rgba(13, 15, 20, 1) 5%, rgba(13, 15, 20, 1) 90%)',
+        ease: 'power4.inOut',
+      });
+      tl.to(mask, { width: maskWidth, height: maskHeight, ease: 'power4.inOut' });
+      tl.to(mask, {
+        duration: 0.5,
+        '--before-bg': 'radial-gradient(circle, rgba(13, 15, 20, 0) 5%, rgba(13, 15, 20, 0.5) 90%)',
+        ease: 'power4.inOut',
+      });
+      setTimeout(() => {
+        offsetWidth = maskWidth / 2;
+        offsetHeight = maskHeight / 2;
+      }, 1000);
+    }
+  });
+
+  function handleFirstMove() {
+    const mobileInstuct = document.querySelector('.standby_instuctions') as HTMLElement;
+
+    gsap.to(mask, { duration: 1, opacity: 1, ease: 'power4.inOut' });
+    gsap.to(mobileInstuct, { duration: 1, opacity: 0, display: 'none', ease: 'power4.inOut' });
+
+    document.removeEventListener('mousemove', handleFirstMove);
+  }
 };

@@ -12,8 +12,8 @@ export const tempFrame = () => {
 
       const scaleData = frameFill.dataset.frameScale as string;
       const defaultScale = parseFloat(scaleData);
-      const mobileScale = defaultScale * 2;
       let frameScale = defaultScale;
+      let frameBottom = 16 * 6;
 
       setup();
 
@@ -25,8 +25,11 @@ export const tempFrame = () => {
         const deviceInfo = breakpoints();
         // console.log(`${deviceInfo[0]} [w: ${deviceInfo[1]}  h: ${deviceInfo[2]}]`);
 
-        if (deviceInfo[0] === 'mobile-landscape' || deviceInfo[0] === 'mobile-portrait') {
-          frameScale = mobileScale;
+        if (deviceInfo[0] === 'tablet' || deviceInfo[0] === 'mobile-landscape') {
+          frameScale = defaultScale * 2;
+        } else if (deviceInfo[0] === 'mobile-portrait') {
+          frameScale = defaultScale * 3;
+          frameBottom = 16 * 5;
         } else {
           frameScale = defaultScale;
         }
@@ -44,7 +47,7 @@ export const tempFrame = () => {
         gsap.set(frameBorder, {
           duration: 0,
           width: `${frameMaxWidth - frameTarget}px`,
-          height: `${frameMaxHeight - 96}px`,
+          height: `${frameMaxHeight - frameBottom}px`,
         });
 
         // guides(frameTarget);
