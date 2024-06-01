@@ -1,5 +1,5 @@
 // eslint-disable-next-line simple-import-sort/imports
-import { getTime } from '$utils/time';
+import { getDenverTime, getTime } from '$utils/time';
 import { gsap } from 'gsap';
 
 export const statusComponent = () => {
@@ -8,7 +8,7 @@ export const statusComponent = () => {
   status &&
     (() => {
       // Check if current time is within standard business hours (9 AM to 5 PM)
-      const newTime = getTime();
+      const newTime = getDenverTime();
       const businessHoursStart = 9; // 9 AM
       const businessHoursEnd = 17; // 5 PM (24-hour format)
       const lastBusinessHourStart = 16; // 4 PM
@@ -42,7 +42,8 @@ export const timeComponent = () => {
     })();
 
   function update() {
-    const newTime = getTime()[0];
+    // const newTime = getTime()[0];
+    const newTime = getDenverTime()[0];
 
     for (const i in timeModule) {
       const temp = timeModule[i] as HTMLElement;

@@ -8,7 +8,6 @@ import { colorMode } from '$modules/colorMode';
 import { cursor } from '$modules/cursor';
 import { imageTracking } from '$modules/imageTracking';
 import { home } from '$pages/home';
-import { getTime } from '$utils/time';
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
@@ -25,6 +24,7 @@ window.Webflow.push(() => {
   cursor();
   imageTracking();
   tickerTape();
+  // getDenverTime();
   // ------------------
   // ------------------
 

@@ -15,7 +15,7 @@ export const preload = () => {
   const mobile = document.querySelector('.standby_mobile');
   const mobileInstuct = document.querySelector('.standby_instuctions') as HTMLElement;
 
-  const tl = gsap.timeline();
+  const tl = gsap.timeline({ delay: 0.5 });
   tl.to(preload, { duration: 1, display: 'none', opacity: 0, ease: 'power4.out' });
   tl.to(bg, { duration: 1.2, scale: 1.2, ease: 'power4.out' }, '<');
   tl.to(bgMask, { duration: 1.2, scale: 1.2, ease: 'power4.out' }, '<');
