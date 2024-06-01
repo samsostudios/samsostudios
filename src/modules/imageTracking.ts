@@ -115,7 +115,7 @@ export const imageTracking = () => {
   }
 
   function scaleMouse(scaleFactor: number) {
-    gsap.to(bgImage, { scale: 1 + 0.2 * scaleFactor, ease: 'linear' });
-    gsap.to(maskedImage, { scale: 1 + 0.2 * scaleFactor, ease: 'linear' });
+    gsap.to(bgImage, { scale: 1 + 0.1 * scaleFactor, ease: 'linear' });
+    gsap.to(maskedImage, { scale: 1 + 0.1 * scaleFactor, ease: 'linear' });
   }
 };
