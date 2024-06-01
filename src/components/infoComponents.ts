@@ -3,7 +3,7 @@ import { getTime } from '$utils/time';
 import { gsap } from 'gsap';
 
 export const statusComponent = () => {
-  const status = document.querySelector('.info-module_status') as HTMLElement;
+  const status = [...document.querySelectorAll('.info-module_status')];
 
   status &&
     (() => {
@@ -13,23 +13,28 @@ export const statusComponent = () => {
       const businessHoursEnd = 17; // 5 PM (24-hour format)
       const lastBusinessHourStart = 16; // 4 PM
       const currentHour24 = parseInt(newTime[1].split(':')[0]);
-      const geoStatus = status.querySelector('.info-module_status-icon');
 
-      if (currentHour24 >= businessHoursStart && currentHour24 < lastBusinessHourStart) {
-        // console.log('in business', newTime);
-        gsap.set(geoStatus, { backgroundColor: 'var(--status--active)' });
-      } else if (currentHour24 >= lastBusinessHourStart && currentHour24 < businessHoursEnd) {
-        // console.log('last hour of business', newTime);
-        gsap.set(geoStatus, { backgroundColor: 'var(--status--limited)' });
-      } else {
-        // console.log('outside business', newTime);
-        gsap.set(geoStatus, { backgroundColor: 'var(--status--offline)' });
+      for (const i in status) {
+        const temp = status[i] as HTMLElement;
+
+        const geoStatus = temp.querySelector('.info-module_status-icon');
+
+        if (currentHour24 >= businessHoursStart && currentHour24 < lastBusinessHourStart) {
+          // console.log('in business', newTime);
+          gsap.set(geoStatus, { backgroundColor: 'var(--status--active)' });
+        } else if (currentHour24 >= lastBusinessHourStart && currentHour24 < businessHoursEnd) {
+          // console.log('last hour of business', newTime);
+          gsap.set(geoStatus, { backgroundColor: 'var(--status--limited)' });
+        } else {
+          // console.log('outside business', newTime);
+          gsap.set(geoStatus, { backgroundColor: 'var(--status--offline)' });
+        }
       }
     })();
 };
 
 export const timeComponent = () => {
-  const timeModule = document.querySelector('.info-module_time') as HTMLElement;
+  const timeModule = [...document.querySelectorAll('.info-module_time')];
 
   timeModule &&
     (() => {
@@ -39,7 +44,11 @@ export const timeComponent = () => {
   function update() {
     const newTime = getTime()[0];
 
-    timeModule.innerHTML = newTime;
+    for (const i in timeModule) {
+      const temp = timeModule[i] as HTMLElement;
+      temp.innerHTML = newTime;
+    }
+
     setTimeout(update, 1000);
   }
 };

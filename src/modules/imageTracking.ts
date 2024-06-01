@@ -57,7 +57,7 @@ export const imageTracking = () => {
   window.addEventListener('dblclick', (e) => {
     isLarge = !isLarge;
     if (isLarge) {
-      console.log('make large');
+      // console.log('make large');
       const tl = gsap.timeline();
       tl.to(mask, {
         duration: 0.5,
@@ -75,7 +75,7 @@ export const imageTracking = () => {
         offsetHeight = (maskHeight * 2) / 2;
       }, 500);
     } else {
-      console.log('make small');
+      // console.log('make small');
       const tl = gsap.timeline();
       tl.to(mask, {
         duration: 0.5,
