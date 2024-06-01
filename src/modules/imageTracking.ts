@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 export const imageTracking = () => {
   const mask = document.querySelector('.standby_bg-mask') as HTMLElement;
   const maskedImage = document.querySelector('.standby_bg-mask-image');
+  const bgImage = document.querySelector('.standby_image.is-bg');
   const maskWidth = parseInt(getComputedStyle(mask).width);
   const maskHeight = parseInt(getComputedStyle(mask).height);
 
@@ -23,6 +24,9 @@ export const imageTracking = () => {
   const ySet = gsap.quickSetter(mask, 'y', 'px');
   const ySetM = gsap.quickSetter(maskedImage, 'y', 'px');
 
+  const setScaleX = gsap.quickSetter(bgImage, 'scaleX', 'transform');
+  const setScaleY = gsap.quickSetter(bgImage, 'scaleY', 'transform');
+
   mask.style.setProperty('--before-x', '0.5px');
   mask.style.setProperty('--before-y', '0.5px');
 
@@ -35,6 +39,9 @@ export const imageTracking = () => {
 
     normalizeMouse.x = e.x / window.innerWidth;
     normalizeMouse.y = e.y / window.innerHeight;
+
+    // console.log(normalizeMouse.y);
+    scaleMouse(normalizeMouse.y);
   });
 
   document.addEventListener('mousemove', handleFirstMove);
@@ -51,6 +58,9 @@ export const imageTracking = () => {
     xSetM(-pos.x + offsetWidth);
     ySet(pos.y);
     ySetM(-pos.y + offsetHeight);
+
+    // setScaleX(1 + pos.y);
+    // setScaleY(1 + pos.y);
   });
 
   let isLarge = false;
@@ -102,5 +112,10 @@ export const imageTracking = () => {
     gsap.to(mobileInstuct, { duration: 1, opacity: 0, display: 'none', ease: 'power4.inOut' });
 
     document.removeEventListener('mousemove', handleFirstMove);
+  }
+
+  function scaleMouse(scaleFactor: number) {
+    gsap.to(bgImage, { scale: 1 + 0.2 * scaleFactor, ease: 'linear' });
+    gsap.to(maskedImage, { scale: 1 + 0.2 * scaleFactor, ease: 'linear' });
   }
 };

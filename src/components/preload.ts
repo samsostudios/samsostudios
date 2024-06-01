@@ -22,7 +22,7 @@ export const preload = () => {
   tl.to(frame, { duration: 1, display: 'block', opacity: 1, y: 0, ease: 'power4.inOut' }, '<0.2');
   tl.to(top, { duration: 1, display: 'block', opacity: 1, y: 0, ease: 'power4.inOut' }, '<0.2');
   tl.to(bottom, { duration: 1, display: 'block', opacity: 1, y: 0, ease: 'power4.inOut' }, '<');
-  tl.to(main, { duration: 1, display: 'block', opacity: 1, y: 0, ease: 'power4.inOut' }, '<');
+  tl.to(main, { duration: 1, display: 'flex', opacity: 1, y: 0, ease: 'power4.inOut' }, '<');
   tl.to(mobile, { duration: 1, opacity: 1, y: 0, ease: 'power4.inOut' }, '<');
   if (deviceInfo[0] === 'mobile-portrait') {
     console.log('mob');
